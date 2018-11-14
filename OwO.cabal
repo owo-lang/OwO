@@ -1,0 +1,46 @@
+name:         OwO
+version:      0.1.0.0
+synopsis:     A proof assistant and programming language
+homepage:     https://github.com/owo-lang/OwO
+license:      Apache-2.0
+license-file: LICENSE
+author:       ice1000
+maintainer:   ice1000 <ice1000kotlin@foxmail.com>
+category:     Language
+build-type:   Simple
+-- description:
+-- copyright:
+
+-- Extra files to be distributed with the package, such as examples or a
+-- README.
+extra-source-files:  CHANGELOG.md
+                     README.md
+                     src/full/impossible.h
+cabal-version:       >=1.10
+
+flag debug
+  default: False
+  manual:  True
+  description: Enable debugging features that may slow OwO down.
+
+library
+  build-depends:    base >=4.11 && <4.13
+                  , split >= 0.2.0.0 && < 0.2.3.4
+  hs-source-dirs:   src/full
+  include-dirs:     src/full
+  if flag(debug)
+    cpp-options:    -DDEBUG
+  default-language: Haskell2010
+  -- exposed-modules:
+  -- other-modules:
+  -- other-extensions:
+
+executable owo
+  main-is:          Main.hs
+  build-depends:    OwO
+                  , base >=4.11 && <4.13
+  hs-source-dirs:   src/main
+  default-language: Haskell2010
+  -- other-modules:
+  -- other-extensions:
+
