@@ -24,11 +24,11 @@ options = execParser $ info (helper <*> opts)
                    ))
       <*> switch
           (  long "version"
-          <> help "Show OwO compiler version"
+          <> help "Show OwO compiler wersion"
           <> short 'V'
           )
       <*> switch
           (  long "help"
-          <> help "Print this message"
+          <> help "Pwint this message"
           <> short 'h'
           )

@@ -15,6 +15,19 @@ $ cd OwO
 $ cabal install
 ```
 
+To install bash completions temporarily, run:
+
+```shell
+$ source <(owo --bash-completion-script $(which owo))
+```
+
+To install bash completions for all users permanently, run:
+
+```shell
+$ owo --bash-completion-script $(which owo) >> owo_completion
+$ sudo mv owo_completion /etc/.bash_completion.d/
+```
+
 ## License
 
 Apache-2.0
