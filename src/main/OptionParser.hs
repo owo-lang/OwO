@@ -7,20 +7,24 @@ import Options.Applicative
 import OwO.Options
 
 options :: IO CmdOptions
-options = execParser $ info (helper <*> opts)
+options = customExecParser pref $ info (helper <*> opts)
   (  fullDesc
   <> header "Command line tool for the OwO Pwogwamming Langwage."
   )
   where
+    pref = prefs showHelpOnError
     opts = CmdOptions
       <$> optional
         (strOption (  long "src"
                    <> help "Source file path"
+                   <> metavar "PATH"
                    <> short 'c'
                    ))
       <*> many
         (strOption (  long "include-dir"
                    <> help "Include paths"
+                   <> metavar "DIR"
+                   <> short 'I'
                    ))
       <*> switch
           (  long "version"

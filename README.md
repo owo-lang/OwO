@@ -31,3 +31,12 @@ $ sudo mv owo_completion /etc/.bash_completion.d/
 ## License
 
 Apache-2.0
+
+```text
+  ___            ___
+ / _ \__      __/ _ \
+| | | \ \ /\ / / | | |
+| |_| |\ V  V /| |_| |
+ \___/  \_/\_/  \___/
+    (What's this?)
+```
