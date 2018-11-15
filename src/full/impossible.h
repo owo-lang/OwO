@@ -3,6 +3,7 @@
 
 import OwO.Util.Impossible
 #define __IMPOSSIBLE__ (throwImpossible (Impossible __FILE__ __LINE__))
+#define __UNREACHABLE__ (throwImpossible (Unreachable __FILE__ __LINE__))
 
 #endif
 

@@ -1,20 +1,20 @@
-name:         OwO
-version:      0.1.0.0
-synopsis:     A proof assistant and functional programming language
-homepage:     https://github.com/owo-lang/OwO
-license:      Apache-2.0
-license-file: LICENSE
-author:       ice1000
-maintainer:   ice1000 <ice1000kotlin@foxmail.com>
-category:     Language
-build-type:   Simple
--- description:
+name:       OwO
+version:    0.1.0.0
+synopsis:   A pwoof assistant and functional pwogwamming langwage
+homepage:   https://www.owo-lang.org
+license:    Apache-2.0
+author:     Tesla Ice Zhang
+maintainer: Tesla Ice Zhang <ice1000kotlin@foxmail.com>
+category:   Language
+build-type: Simple
 -- copyright:
 
 extra-source-files: CHANGELOG.md
                     README.md
                     src/full/impossible.h
+license-file:       LICENSE
 cabal-version:      >=1.10
+-- description:
 
 flag debug
   default: False
