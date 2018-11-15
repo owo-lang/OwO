@@ -1,6 +1,8 @@
 module Main (main) where
 
-import OwO.Options
+import OwO.Main (runOwO)
+
+import OptionParser (options)
 
 main :: IO ()
-main = putStrLn "Hello, Haskell!"
+main = options >>= runOwO
