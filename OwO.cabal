@@ -9,7 +9,7 @@ category:   Language
 build-type: Simple
 -- copyright:
 
-extra-source-files: CHANGELOG.md
+extra-source-files: misc/CHANGELOG.md
                     README.md
                     src/full/impossible.h
 license-file:       LICENSE
