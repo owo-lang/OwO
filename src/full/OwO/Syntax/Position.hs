@@ -3,26 +3,26 @@
 
 module OwO.Syntax.Position where
 
-import Data.Foldable (Foldable)
-import qualified Data.Foldable as Fold
-import Data.Function
-import Data.Int
-import Data.Sequence (Seq)
-import qualified Data.Sequence as Seq
-import Data.Text (Text)
+import           Data.Foldable        (Foldable)
+import qualified Data.Foldable        as Fold
+import           Data.Function
+import           Data.Int
+import           Data.Sequence        (Seq)
+import qualified Data.Sequence        as Seq
+import           Data.Text            (Text)
 
+import           OwO.Util.List
 import qualified OwO.Util.StrictMaybe as Strict
-import OwO.Util.List
 
 -- | Represents a point in the input.
 --
--- If two positions have the same 'srcFile' and 'posPos' components,
--- then the final two components should be the same as well, but since
--- this can be hard to enforce the program should not rely too much on
--- the last two components; they are mainly there to improve error
--- messages for the user.
+--   If two positions have the same 'srcFile' and 'posPos' components,
+--   then the final two components should be the same as well, but since
+--   this can be hard to enforce the program should not rely too much on
+--   the last two components; they are mainly there to improve error
+--   messages for the user.
 --
--- Note the invariant which positions have to satisfy: 'positionInvariant'.
+--   Note the invariant which positions have to satisfy: 'positionInvariant'.
 data Position' a = Pn
   { srcFile :: !a     -- ^ File.
   , posPos  :: !Int32 -- ^ Position, counting from 0.
@@ -49,10 +49,10 @@ type Position       = Position' SrcFile
 type PositionNoFile = Position' ()
 
 -- | A range is a file name, plus a sequence of intervals, assumed to
--- point to the given file. The intervals should be consecutive and
--- separated.
+--   point to the given file. The intervals should be consecutive and
+--   separated.
 --
--- Note the invariant which ranges have to satisfy: 'rangeInvariant'.
+--   Note the invariant which ranges have to satisfy: 'rangeInvariant'.
 data Range' a
   = NoRange
   | Range !a (Seq IntervalNoFile)
@@ -64,7 +64,7 @@ type Range = Range' SrcFile
 
 -- | An interval. The @iEnd@ position is not included in the interval.
 --
--- Note the invariant which intervals have to satisfy: 'intervalInvariant'.
+--   Note the invariant which intervals have to satisfy: 'intervalInvariant'.
 data Interval' a = Interval { iStart, iEnd :: !(Position' a) }
 
 deriving instance Show a => Show (Interval' a)
@@ -94,18 +94,18 @@ rangeInvariant :: Ord a => Range' a -> Bool
 rangeInvariant r =
   consecutiveAndSeparated (rangeIntervals r) &&
   case r of
-    Range _ is -> not (null is)
+    Range _ is -> not $ null is
     NoRange    -> True
 
 -- | The intervals that make up the range. The intervals are
--- consecutive and separated ('consecutiveAndSeparated').
+--   consecutive and separated ('consecutiveAndSeparated').
 rangeIntervals :: Range' a -> [IntervalNoFile]
 rangeIntervals NoRange      = []
 rangeIntervals (Range _ is) = Fold.toList is
 
 -- | Turns a file name plus a list of intervals into a range.
 --
--- Precondition: 'consecutiveAndSeparated'.
+--   Precondition: 'consecutiveAndSeparated'.
 intervalsToRange :: a -> [IntervalNoFile] -> Range' a
 intervalsToRange _ [] = NoRange
-intervalsToRange f is = Range f (Seq.fromList is)
+intervalsToRange f is = Range f $ Seq.fromList is

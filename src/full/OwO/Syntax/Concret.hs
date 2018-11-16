@@ -1,8 +1,10 @@
 {-# LANGUAGE CPP #-}
 module OwO.Syntax.Concret where
 
-import OwO.Syntax.Common
-import OwO.Syntax.Position
+import           Data.Text
+
+import           OwO.Syntax.Common
+import           OwO.Syntax.Position
 
 #include <impossible.h>
 
@@ -15,6 +17,6 @@ import OwO.Syntax.Position
     in different locations are equal.
 -}
 data Name
-  = Name Range String   -- ^ A identifier.
+  = Name   Range Text   -- ^ A identifier.
   | NoName Range NameId -- ^ @_@.
   deriving (Eq, Ord, Show)

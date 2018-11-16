@@ -6,15 +6,12 @@ module OwO.Version
   , versionWithCommitInfo
   ) where
 
-import Development.GitRev
+import           Development.GitRev
 
-import Data.Version
-import Data.List
-  ( intercalate
-  , map 
-  )
+import           Data.List          (intercalate, map)
+import           Data.Version
 
-import qualified Paths_OwO as PO
+import qualified Paths_OwO          as PO
 
 -- | The version of OwO.
 

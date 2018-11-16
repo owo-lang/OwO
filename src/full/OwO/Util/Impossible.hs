@@ -7,7 +7,7 @@ module OwO.Util.Impossible
   , catchImpossible
   ) where
 
-import Control.Exception as E
+import           Control.Exception as E
 
 -- | \"Impossible\" errors, annotated with a file name and a line
 --   number corresponding to the source code location of the error.

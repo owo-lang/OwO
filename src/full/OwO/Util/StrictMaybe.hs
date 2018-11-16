@@ -35,12 +35,12 @@ import           Control.Applicative (pure, (<$>))
 import           Control.DeepSeq     (NFData (..))
 import           Data.Binary         (Binary (..))
 import           Data.Data           (Data (..))
-import           Data.Monoid         (Monoid, mempty, mappend)
-import           Data.Semigroup      (Semigroup, (<>))
 import           Data.Foldable       (Foldable (..))
-import           Data.Traversable    (Traversable (..))
-import           Data.Strict.Maybe   (Maybe (Nothing, Just), fromJust,
+import           Data.Monoid         (Monoid, mappend, mempty)
+import           Data.Semigroup      (Semigroup, (<>))
+import           Data.Strict.Maybe   (Maybe (Just, Nothing), fromJust,
                                       fromMaybe, isJust, isNothing, maybe)
+import           Data.Traversable    (Traversable (..))
 import           GHC.Generics        (Generic (..))
 
 toStrict :: Lazy.Maybe a -> Maybe a
@@ -82,13 +82,13 @@ instance Binary a => Binary (Maybe a) where
 
 -- | Analogous to 'Lazy.listToMaybe' in "Data.Maybe".
 listToMaybe :: [a] -> Maybe a
-listToMaybe []        =  Nothing
-listToMaybe (a:_)     =  Just a
+listToMaybe []    =  Nothing
+listToMaybe (a:_) =  Just a
 
 -- | Analogous to 'Lazy.maybeToList' in "Data.Maybe".
 maybeToList :: Maybe a -> [a]
-maybeToList  Nothing   = []
-maybeToList  (Just x)  = [x]
+maybeToList  Nothing  = []
+maybeToList  (Just x) = [x]
 
 -- | Analogous to 'Lazy.catMaybes' in "Data.Maybe".
 catMaybes :: [Maybe a] -> [a]
@@ -108,8 +108,8 @@ mapMaybe f (x:xs) = case f x of
 
 -- | @unionWith@ for collections of size <= 1.
 unionMaybeWith :: (a -> a -> a) -> Maybe a -> Maybe a -> Maybe a
-unionMaybeWith f Nothing mb      = mb
-unionMaybeWith f ma      Nothing = ma
+unionMaybeWith f Nothing mb        = mb
+unionMaybeWith f ma      Nothing   = ma
 unionMaybeWith f (Just a) (Just b) = Just $ f a b
 
 -- | Unzipping a list of length <= 1.

@@ -2,9 +2,9 @@
 
 module OwO.Syntax.Abstract where
 
-import OwO.Syntax.Common
-import OwO.Syntax.Position
-import qualified OwO.Syntax.Concret as C
+import           OwO.Syntax.Common
+import qualified OwO.Syntax.Concret  as C
+import           OwO.Syntax.Position
 
 -- | Program Structure Item: File Type
 data PsiFileType

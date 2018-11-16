@@ -1,11 +1,11 @@
 {-# LANGUAGE CPP #-}
 module OwO.TypeChecking.Monad where
 
-import Control.Monad
-import Control.Monad.State
-import Control.Monad.Trans.Except
+import           Control.Monad
+import           Control.Monad.State
+import           Control.Monad.Trans.Except
 
-import OwO.Options
+import           OwO.Options
 
 #include <impossible.h>
 

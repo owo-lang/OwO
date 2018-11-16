@@ -5,14 +5,14 @@ module OwO.Options
   , defaultPragmaOptions
   ) where
 
-import Data.Function
-import Data.List
+import           Data.Function
+import           Data.List
 
 data CmdOptions = CmdOptions
-  { optInputFile        :: Maybe FilePath
-  , optIncludePaths     :: [FilePath]
-  , optShowVersion      :: Bool
-  , optShowHelp         :: Bool
+  { optInputFile    :: Maybe FilePath
+  , optIncludePaths :: [FilePath]
+  , optShowVersion  :: Bool
+  , optShowHelp     :: Bool
   -- , optPragmaOptions    :: PragmaOptions
   } deriving Show
 
