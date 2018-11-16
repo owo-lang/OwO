@@ -1,8 +1,5 @@
 {-# LANGUAGE CPP #-}
 
--- requires:
--- , gitrev >= 1.3.1 && < 2.0
-
 import Distribution.Simple
 import Distribution.Simple.LocalBuildInfo
 import Distribution.Simple.Setup
