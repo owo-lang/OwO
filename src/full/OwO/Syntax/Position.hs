@@ -1,7 +1,22 @@
 {-# LANGUAGE CPP                #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module OwO.Syntax.Position where
+module OwO.Syntax.Position
+  ( SrcFile
+
+  -- Positions
+  , Position'(..)
+  , Position
+  , PositionNoFile
+  , positionInvariant
+  , importantPart
+
+  -- Intervals
+  , Interval'(..)
+  , Interval
+  , IntervalNoFile
+  , intervalInvariant
+  ) where
 
 import           Data.Foldable        (Foldable)
 import qualified Data.Foldable        as Fold
@@ -48,20 +63,6 @@ type SrcFile = Strict.Maybe Text
 type Position       = Position' SrcFile
 type PositionNoFile = Position' ()
 
--- | A range is a file name, plus a sequence of intervals, assumed to
---   point to the given file. The intervals should be consecutive and
---   separated.
---
---   Note the invariant which ranges have to satisfy: 'rangeInvariant'.
-data Range' a
-  = NoRange
-  | Range !a (Seq IntervalNoFile)
-
-deriving instance Show a => Show (Range' a)
-deriving instance Eq a => Eq (Range' a)
-deriving instance Ord a => Ord (Range' a)
-type Range = Range' SrcFile
-
 -- | An interval. The @iEnd@ position is not included in the interval.
 --
 --   Note the invariant which intervals have to satisfy: 'intervalInvariant'.
@@ -88,24 +89,3 @@ consecutiveAndSeparated is =
   (null is ||
    and (zipWith (<) (iEnd   <$> init is)
                     (iStart <$> tail is)))
-
--- | Range invariant.
-rangeInvariant :: Ord a => Range' a -> Bool
-rangeInvariant r =
-  consecutiveAndSeparated (rangeIntervals r) &&
-  case r of
-    Range _ is -> not $ null is
-    NoRange    -> True
-
--- | The intervals that make up the range. The intervals are
---   consecutive and separated ('consecutiveAndSeparated').
-rangeIntervals :: Range' a -> [IntervalNoFile]
-rangeIntervals NoRange      = []
-rangeIntervals (Range _ is) = Fold.toList is
-
--- | Turns a file name plus a list of intervals into a range.
---
---   Precondition: 'consecutiveAndSeparated'.
-intervalsToRange :: a -> [IntervalNoFile] -> Range' a
-intervalsToRange _ [] = NoRange
-intervalsToRange f is = Range f $ Seq.fromList is

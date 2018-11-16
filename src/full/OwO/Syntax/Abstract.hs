@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE TypeOperators #-}
 
 module OwO.Syntax.Abstract where
@@ -27,7 +28,7 @@ type QModuleName = QModuleName' String
 data Name = Name
   { nameId          :: !NameId
   , nameConcrete    :: C.Name
-  , nameBindingSite :: Range
+  , nameBindingSite :: Interval
   } deriving (Eq, Ord, Show)
 
 data QName = QName
@@ -40,4 +41,11 @@ data PsiFile = PsiFile
   { fileType           :: PsiFileType
   , topLevelModuleName :: QModuleName
   } deriving (Eq, Ord, Show)
+
+type Fixity = Int
+
+data PsiDeclaration t
+  = PsiFixity Interval Fixity [QName]
+  | PsiSubmodule QModuleName Interval [PsiDeclaration t]
+  deriving (Functor, Show)
 

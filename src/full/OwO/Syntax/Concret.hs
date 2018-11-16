@@ -13,10 +13,10 @@ import           OwO.Syntax.Position
     with 'Hole's where the arguments should go. For instance: @[Hole,Id "+",Hole]@
     is infix addition.
 
-    Equality and ordering on @Name@s are defined to ignore range so same names
+    Equality and ordering on @Name@s are defined to ignore interval so same names
     in different locations are equal.
 -}
 data Name
-  = Name   Range Text   -- ^ A identifier.
-  | NoName Range NameId -- ^ @_@.
+  = Name   Interval Text   -- ^ A identifier.
+  | NoName Interval NameId -- ^ @_@.
   deriving (Eq, Ord, Show)
