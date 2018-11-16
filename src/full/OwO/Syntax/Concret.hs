@@ -17,4 +17,4 @@ import OwO.Syntax.Position
 data Name
   = Name Range String   -- ^ A identifier.
   | NoName Range NameId -- ^ @_@.
-  deriving (Show)
+  deriving (Eq, Ord, Show)

@@ -58,6 +58,8 @@ data Range' a
   | Range !a (Seq IntervalNoFile)
 
 deriving instance Show a => Show (Range' a)
+deriving instance Eq a => Eq (Range' a)
+deriving instance Ord a => Ord (Range' a)
 type Range = Range' SrcFile
 
 -- | An interval. The @iEnd@ position is not included in the interval.
@@ -66,6 +68,8 @@ type Range = Range' SrcFile
 data Interval' a = Interval { iStart, iEnd :: !(Position' a) }
 
 deriving instance Show a => Show (Interval' a)
+deriving instance Eq a => Eq (Interval' a)
+deriving instance Ord a => Ord (Interval' a)
 type Interval       = Interval' SrcFile
 type IntervalNoFile = Interval' ()
 

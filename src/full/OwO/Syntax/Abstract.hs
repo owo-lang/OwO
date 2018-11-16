@@ -28,16 +28,16 @@ data Name = Name
   { nameId          :: !NameId
   , nameConcrete    :: C.Name
   , nameBindingSite :: Range
-  }
+  } deriving (Eq, Ord, Show)
 
 data QName = QName
   { moduleName  :: QModuleName
   , concretName :: Name
-  }
+  } deriving (Eq, Ord, Show)
 
 -- | Program Structure Item: File
 data PsiFile = PsiFile
   { fileType           :: PsiFileType
   , topLevelModuleName :: QModuleName
-  } deriving (Eq, Show)
+  } deriving (Eq, Ord, Show)
 
