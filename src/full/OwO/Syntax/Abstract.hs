@@ -31,6 +31,7 @@ data Name = Name
   , nameBindingSite :: Interval
   } deriving (Eq, Ord, Show)
 
+-- | Qualified name, with module name
 data QName = QName
   { moduleName  :: QModuleName
   , concretName :: Name
@@ -44,8 +45,61 @@ data PsiFile = PsiFile
 
 type Fixity = Int
 
+-- | Function level pragma
+data FnPragma
+  -- | Do not reduce, disable termination check
+  = NonTerminate
+  -- | Add to instance search
+  | Instance
+  -- | Supposed to raise an error (Maybe specify the error type?)
+  | Failing
+  -- | Disable termination check, unsafe
+  | Terminating
+  deriving (Eq, Ord, Show)
+
+type FnPragmas = [FnPragma]
+
+data PsiDataConstructor t
+-- ^ TODO
+
+-- | Inductive data family
+data PsiDataInfo t
+  -- | An in-place definition
+  = PsiDataDefinition
+    { dataName     :: QName
+    , dataNameIn   :: Interval
+    , dataTypeCons :: t
+    , dataCons     :: PsiDataConstructor t
+    }
+  -- | A data type signature, for mutual recursion
+  | PsiDataSignature
+    { dataName     :: QName
+    , dataNameIn   :: Interval
+    , dataTypeCons :: t
+    } deriving (Functor)
+
+data DataPragma
+  = NoPositivityCheck
+  deriving (Eq, Ord, Show)
+
+type DataPragmas = [DataPragma]
+
+-- | Top-level declarations
+--   TODOs: PsiCodata, PsiPattern, PsiCopattern
 data PsiDeclaration t
+  -- | infix, infixl, infixr
   = PsiFixity Interval Fixity [QName]
-  | PsiSubmodule QModuleName Interval [PsiDeclaration t]
+  -- | Type signature
+  | PsiType Interval QName FnPragmas t
+  -- | Module defined in modules
+  | PsiSubmodule Interval QModuleName [PsiDeclaration t]
+  -- | definitions without type signature
+  | PsiConstant Interval QName FnPragmas t
+  -- | Postulate, unsafe
+  | PsiPostulate Interval QName FnPragmas t
+  -- | Primitive
+  | PsiPrimitive Interval QName t
+  -- | Inductive data families
+  | PsiData Interval QName DataPragmas (PsiDataInfo t)
   deriving (Functor, Show)
 
