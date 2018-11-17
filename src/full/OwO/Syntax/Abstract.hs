@@ -7,6 +7,23 @@ import           OwO.Syntax.Common
 import qualified OwO.Syntax.Concret  as C
 import           OwO.Syntax.Position
 
+data PsiTerm
+  -- | A reference to a variable
+  = PsiReference Loc QName
+  {-
+  -- | Second interval is the name
+  | PsiLambda Loc QName Loc PsiTerm PsiTerm
+  -}
+  -- | Pattern variable
+  | PsiPatternVar Loc QName
+  -- | Absurd pattern, impossible pattern
+  | PsiImpossible Loc
+  -- | Dotted pattern
+  | PsiDotPattern Loc PsiTerm
+  -- | Meta variable
+  | PsiMetaVar Loc QName
+  deriving (Eq, Ord, Show)
+
 -- | Program Structure Item: File Type
 data PsiFileType
   = CodeFileType
@@ -28,7 +45,7 @@ type QModuleName = QModuleName' String
 data Name = Name
   { nameId          :: !NameId
   , nameConcrete    :: C.Name
-  , nameBindingSite :: Interval
+  , nameBindingSite :: Loc
   } deriving (Eq, Ord, Show)
 
 -- | Qualified name, with module name
@@ -59,24 +76,27 @@ data FnPragma
 
 type FnPragmas = [FnPragma]
 
-data PsiDataConstructor t
--- ^ TODO
+data PsiDataConstructor t = PsiDataConstructor
+  { dataConsName :: QName
+  , dataConsLoc  :: Loc
+  , dataConsBody :: t
+  } deriving (Eq, Functor, Show)
 
 -- | Inductive data family
-data PsiDataInfo t
+data PsiDataInfo' t
   -- | An in-place definition
   = PsiDataDefinition
     { dataName     :: QName
-    , dataNameIn   :: Interval
+    , dataNameLoc  :: Loc
     , dataTypeCons :: t
-    , dataCons     :: PsiDataConstructor t
+    , dataCons     :: [PsiDataConstructor t]
     }
   -- | A data type signature, for mutual recursion
   | PsiDataSignature
     { dataName     :: QName
-    , dataNameIn   :: Interval
+    , dataNameLoc  :: Loc
     , dataTypeCons :: t
-    } deriving (Functor)
+    } deriving (Eq, Functor, Show)
 
 data DataPragma
   = NoPositivityCheck
@@ -86,20 +106,20 @@ type DataPragmas = [DataPragma]
 
 -- | Top-level declarations
 --   TODOs: PsiCodata, PsiPattern, PsiCopattern
-data PsiDeclaration t
+data PsiDeclaration' t
   -- | infix, infixl, infixr
-  = PsiFixity Interval Fixity [QName]
+  = PsiFixity Loc Fixity [QName]
   -- | Type signature
-  | PsiType Interval QName FnPragmas t
+  | PsiType Loc QName FnPragmas t
   -- | Module defined in modules
-  | PsiSubmodule Interval QModuleName [PsiDeclaration t]
-  -- | definitions without type signature
-  | PsiConstant Interval QName FnPragmas t
+  | PsiSubmodule Loc QModuleName [PsiDeclaration' t]
   -- | Postulate, unsafe
-  | PsiPostulate Interval QName FnPragmas t
+  | PsiPostulate Loc QName FnPragmas t
   -- | Primitive
-  | PsiPrimitive Interval QName t
+  | PsiPrimitive Loc QName t
   -- | Inductive data families
-  | PsiData Interval QName DataPragmas (PsiDataInfo t)
+  | PsiData Loc QName DataPragmas (PsiDataInfo' t)
   deriving (Functor, Show)
 
+type PsiDeclaration = PsiDeclaration' PsiTerm
+type PsiData        = PsiData' PsiTerm

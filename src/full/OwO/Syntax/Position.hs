@@ -11,10 +11,10 @@ module OwO.Syntax.Position
   , positionInvariant
   , importantPart
 
-  -- Intervals
-  , Interval'(..)
-  , Interval
-  , IntervalNoFile
+  -- Locs
+  , Loc'(..)
+  , Loc
+  , LocNoFile
   , intervalInvariant
   ) where
 
@@ -66,15 +66,15 @@ type PositionNoFile = Position' ()
 -- | An interval. The @iEnd@ position is not included in the interval.
 --
 --   Note the invariant which intervals have to satisfy: 'intervalInvariant'.
-data Interval' a = Interval { iStart, iEnd :: !(Position' a) }
+data Loc' a = Loc { iStart, iEnd :: !(Position' a) }
 
-deriving instance Show a => Show (Interval' a)
-deriving instance Eq a => Eq (Interval' a)
-deriving instance Ord a => Ord (Interval' a)
-type Interval       = Interval' SrcFile
-type IntervalNoFile = Interval' ()
+deriving instance Show a => Show (Loc' a)
+deriving instance Eq a => Eq (Loc' a)
+deriving instance Ord a => Ord (Loc' a)
+type Loc       = Loc' SrcFile
+type LocNoFile = Loc' ()
 
-intervalInvariant :: Ord a => Interval' a -> Bool
+intervalInvariant :: Ord a => Loc' a -> Bool
 intervalInvariant i =
   all positionInvariant [iStart i, iEnd i] &&
   iStart i <= iEnd i &&
@@ -82,7 +82,7 @@ intervalInvariant i =
 
 -- | Are the intervals consecutive and separated, do they all point to
 --   the same file, and do they satisfy the interval invariant?
-consecutiveAndSeparated :: Ord a => [Interval' a] -> Bool
+consecutiveAndSeparated :: Ord a => [Loc' a] -> Bool
 consecutiveAndSeparated is =
   all intervalInvariant is &&
   allEqual ((srcFile . iStart) <$> is) &&

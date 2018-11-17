@@ -17,6 +17,6 @@ import           OwO.Syntax.Position
     in different locations are equal.
 -}
 data Name
-  = Name   Interval Text   -- ^ A identifier.
-  | NoName Interval NameId -- ^ @_@.
+  = Name   Loc Text   -- ^ A identifier.
+  | NoName Loc NameId -- ^ @_@.
   deriving (Eq, Ord, Show)
