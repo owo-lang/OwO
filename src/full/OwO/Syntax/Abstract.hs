@@ -76,7 +76,7 @@ data FnPragma
 
 type FnPragmas = [FnPragma]
 
-data PsiDataConstructor t = PsiDataConstructor
+data PsiDataCons' t = PsiDataCons
   { dataConsName :: QName
   , dataConsLoc  :: Loc
   , dataConsBody :: t
@@ -89,7 +89,7 @@ data PsiDataInfo' t
     { dataName     :: QName
     , dataNameLoc  :: Loc
     , dataTypeCons :: t
-    , dataCons     :: [PsiDataConstructor t]
+    , dataCons     :: [PsiDataCons' t]
     }
   -- | A data type signature, for mutual recursion
   | PsiDataSignature
@@ -119,7 +119,8 @@ data PsiDeclaration' t
   | PsiPrimitive Loc QName t
   -- | Inductive data families
   | PsiData Loc QName DataPragmas (PsiDataInfo' t)
-  deriving (Functor, Show)
+  deriving (Eq, Functor, Ord, Show)
 
-type PsiDeclaration = PsiDeclaration' PsiTerm
-type PsiData        = PsiData' PsiTerm
+type PsiDeclaration  = PsiDeclaration' PsiTerm
+type PsiDataCons    = PsiDataCons' PsiTerm
+type PsiDataInfo    = PsiDataInfo' PsiTerm

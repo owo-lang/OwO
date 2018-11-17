@@ -94,7 +94,7 @@ steps:
       #   >     )
       #
       # Default: inline
-      long_list_align: inline
+      long_list_align: multiline
 
       # Align empty list (importing instances)
       #
