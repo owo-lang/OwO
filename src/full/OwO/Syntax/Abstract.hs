@@ -80,7 +80,7 @@ data PsiDataCons' t = PsiDataCons
   { dataConsName :: QName
   , dataConsLoc  :: Loc
   , dataConsBody :: t
-  } deriving (Eq, Functor, Show)
+  } deriving (Eq, Functor, Ord, Show)
 
 -- | Inductive data family
 data PsiDataInfo' t
@@ -96,7 +96,7 @@ data PsiDataInfo' t
     { dataName     :: QName
     , dataNameLoc  :: Loc
     , dataTypeCons :: t
-    } deriving (Eq, Functor, Show)
+    } deriving (Eq, Functor, Ord, Show)
 
 data DataPragma
   = NoPositivityCheck

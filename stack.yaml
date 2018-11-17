@@ -1,0 +1,21 @@
+resolver: lts-12.18
+# resolver: nightly-2018-09-21
+# resolver: ghc-8.4.4
+
+packages:
+- .
+
+# extra-deps:
+# flags: {}
+# extra-package-dbs: []
+
+# system-ghc: true
+# require-stack-version: -any # Default
+# require-stack-version: ">=1.9"
+# arch: i386
+# arch: x86_64
+#
+# Extra directories used by stack for building
+# extra-include-dirs: [/path/to/dir]
+# extra-lib-dirs: [/path/to/dir]
+# compiler-check: newer-minor
