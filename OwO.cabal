@@ -66,6 +66,7 @@ library
                   , OwO.TypeChecking.Match
                   , OwO.TypeChecking.Monad
                   , OwO.TypeChecking.Reduce
+                  , OwO.TypeChecking
 
                   , OwO.Util.Impossible
                   , OwO.Util.List

@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveGeneric #-}
+
 module OwO.Options
   ( CmdOptions(..)
   , PragmaOptions(..)
@@ -8,17 +10,19 @@ module OwO.Options
 import           Data.Function
 import           Data.List
 
+import           GHC.Generics  (Generic)
+
 data CmdOptions = CmdOptions
   { optInputFile    :: Maybe FilePath
   , optIncludePaths :: [FilePath]
   , optShowVersion  :: Bool
   , optShowHelp     :: Bool
   -- , optPragmaOptions    :: PragmaOptions
-  } deriving Show
+  } deriving (Generic, Show)
 
 data PragmaOptions = PragmaOptions
   { optSafe :: Bool
-  } deriving (Show, Eq)
+  } deriving (Eq, Generic, Show)
 
 defaultCmdOptions :: CmdOptions
 defaultCmdOptions = CmdOptions

@@ -1,4 +1,6 @@
 {-# LANGUAGE CPP                   #-}
+{-# LANGUAGE DeriveFunctor         #-}
+{-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 
 -- | OwO's type checking state is a state monad transformer.
@@ -13,6 +15,8 @@ import qualified Data.Map                   as Map
 import           OwO.Options
 import           OwO.Syntax.Abstract
 import           OwO.TypeChecking.Core
+
+import           GHC.Generics               (Generic)
 
 #include <impossible.h>
 
@@ -29,16 +33,19 @@ allNames = Map.keys
 data TCState = TypeCheckingState
   { stateOptions :: CmdOptions
   -- ^ This is passed all around
-  } deriving Show
+  } deriving (Generic, Show)
 
 -- | TypeChecking Environment
 data TCEnv = TypeCheckingEnv
   { envState        :: TCState
   -- ^ This is passed all around
-  } deriving (Show)
+  } deriving (Generic, Show)
 
-data TCErr = OtherErr String
-  deriving (Eq, Show)
+data TCErr' t
+  = OtherErr t
+  deriving (Eq, Functor, Show)
+
+type TCErr = TCErr' PsiTerm
 
 -- | TypeChecking Monad Transformer
 type TCMT m = StateT TCState (ExceptT TCErr m)
