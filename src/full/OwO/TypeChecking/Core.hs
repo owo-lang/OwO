@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP                   #-}
+{-# LANGUAGE DeriveFunctor         #-}
 {-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 
@@ -11,8 +12,10 @@ import           OwO.Syntax.Position
 
 import           GHC.Generics        (Generic)
 
--- | Core language term, i refers to the identifier.
---   We translate typechecked code into this form
+#include <impossible.h>
+
+-- | Core language term, @i@ refers to the identifier.
+--   We translate type-checked code into this form
 data Term' i
   = App !(Term' i) (Term' i)
   -- ^ Application

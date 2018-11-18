@@ -63,6 +63,7 @@ library
                   , OwO.Syntax.Position
 
                   , OwO.TypeChecking.Core
+                  , OwO.TypeChecking.Match
                   , OwO.TypeChecking.Monad
                   , OwO.TypeChecking.Reduce
 
