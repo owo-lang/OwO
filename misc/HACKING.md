@@ -10,6 +10,14 @@ $ cd OwO
 $ cabal install
 ```
 
+You can also use stack, no problem:
+
+```shell
+$ git clone https://github.com/owo-lang/OwO
+$ cd OwO
+$ stack install
+```
+
 To install bash completions temporarily, run:
 
 ```shell
@@ -23,12 +31,21 @@ $ owo --bash-completion-script $(which owo) >> owo_completion
 $ sudo mv owo_completion /etc/.bash_completion.d/
 ```
 
-## Setup your developing environment
+## Setup your editor
 
 ### Code
 
 Install the `stylish-haskell` extension to format the code easier.
 You should always format your code before pushing it.
+
+It's recommended to use drammie's `Simple GHC (Haskell) Integration` plugin.
+Configure your workspace:
+
+```json
+{
+    "ghcSimple.workspaceType": "stack"
+}
+```
 
 ### Emacs
 
