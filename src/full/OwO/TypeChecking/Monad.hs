@@ -1,4 +1,5 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP                   #-}
+{-# LANGUAGE DuplicateRecordFields #-}
 
 -- | OwO's type checking state is a state monad transformer.
 --   We call it TypeCheckingMonad, in short TCM, as Agda does.
@@ -11,21 +12,30 @@ import qualified Data.Map                   as Map
 
 import           OwO.Options
 import           OwO.Syntax.Abstract
+import           OwO.TypeChecking.Core
 
 #include <impossible.h>
 
 -- | Context
-data TCEnv = TypeCheckingEnv
-  { commandLineOptions :: CmdOptions
-  -- ^ This is passed all around
-  } deriving (Show)
+type TCCtx a = Map.Map QName a
+
+-- | Maybe useful for completion?
+--   Dunno, LOL.
+allNames :: TCCtx a -> [QName]
+allNames = Map.keys
 
 -- | TypeChecking State. I haven't decide on whether to store warnings here
 --   (but errors should definitely be in the other side of the Monad)
 data TCState = TypeCheckingState
-  { commandLineOptions :: CmdOptions
+  { stateOptions :: CmdOptions
   -- ^ This is passed all around
   } deriving Show
+
+-- | TypeChecking Environment
+data TCEnv = TypeCheckingEnv
+  { envState        :: TCState
+  -- ^ This is passed all around
+  } deriving (Show)
 
 data TCErr = OtherErr String
   deriving (Eq, Show)

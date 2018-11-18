@@ -38,7 +38,6 @@ instance Enum NameId where
 
 -- | A meta variable identifier is just a natural number.
 --   It can have a name, as in Idris.
---
 data MetaId = MetaId
   { metaId   :: !Word64
   , metaName :: Strict.Maybe String
