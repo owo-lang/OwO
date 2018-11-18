@@ -3,7 +3,7 @@
 
 module OwO.Syntax.Concret where
 
-import           Data.Text
+import qualified Data.Text           as T
 
 import           OwO.Syntax.Common
 import           OwO.Syntax.Position
@@ -28,6 +28,10 @@ data Name
 locationOfName :: Name -> Loc
 locationOfName (Name   l _) = l
 locationOfName (NoName l _) = l
+
+textOfName :: Name -> T.Text
+textOfName (Name   _ n) = n
+textOfName (NoName _ _) = T.pack "_"
 
 instance Eq Name where
   Name _ a   == Name _ b = a == b

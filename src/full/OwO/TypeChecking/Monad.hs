@@ -12,7 +12,7 @@ import           Control.Monad
 import           Control.Monad.State
 import           Control.Monad.Trans.Except
 import qualified Data.Map                   as Map
-import qualified Data.Text                  as T
+import           Data.Maybe                 (fromMaybe)
 
 import           OwO.Options
 import           OwO.Syntax.Abstract
@@ -25,14 +25,14 @@ import           GHC.Generics               (Generic)
 
 #include <impossible.h>
 
--- | Alias, for refactoring convenience
-type TextName = T.Text
-
 -- | Context
 type TCCtx a = Map.Map QModuleName (Map.Map TextName a)
 
 emptyCtx :: TCCtx a
 emptyCtx = Map.empty
+
+mapCtx :: (a -> b) -> TCCtx a -> TCCtx b
+mapCtx = fmap . fmap
 
 -- | Maybe useful for completion?
 --   Dunno, LOL.
@@ -44,6 +44,18 @@ allNames ctx = Map.toList ctx >>=
 lookupCtxWithName :: QModuleName -> TextName -> TCCtx a -> Maybe a
 lookupCtxWithName currentModule name ctx =
   Map.lookup currentModule ctx >>= Map.lookup name
+
+lookupCtx :: QName -> TCCtx a -> Maybe a
+lookupCtx (QName currentModule name) = lookupCtxWithName currentModule $ nameConcret name
+
+-- | Overwriting
+addDefinitionWithName :: QModuleName -> TextName -> a -> TCCtx a -> TCCtx a
+addDefinitionWithName targetModule name a ctx = fromMaybe ctx $
+  (\ modifiedCtx -> Map.insert targetModule modifiedCtx ctx) <$>
+  Map.insert name a <$> Map.lookup targetModule ctx
+
+addDefinition :: QName -> a -> TCCtx a -> Maybe a
+addDefinition (QName currentModule name) = lookupCtxWithName currentModule $ nameConcret name  
 
 -- | TypeChecking State. I haven't decide on whether to store warnings here
 --   (but errors should definitely be in the other side of the Monad)

@@ -5,7 +5,7 @@
 
 module OwO.Syntax.Abstract where
 
-import qualified Data.Text           as Text
+import qualified Data.Text           as T
 
 import           OwO.Syntax.Common
 import qualified OwO.Syntax.Concret  as C
@@ -66,6 +66,9 @@ data QName = QName
   { moduleName  :: QModuleName
   , concretName :: Name
   } deriving (Eq, Generic, Ord, Show)
+
+simpleName :: QName -> T.Text
+simpleName = textOfName . nameConcrete . concretName
 
 -- | Program Structure Item: File
 data PsiFile = PsiFile

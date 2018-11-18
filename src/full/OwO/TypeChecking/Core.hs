@@ -6,6 +6,8 @@
 -- | Core language
 module OwO.TypeChecking.Core where
 
+import qualified Data.Text           as T
+
 import           OwO.Syntax.Abstract
 import           OwO.Syntax.Common
 import           OwO.Syntax.Position
@@ -13,6 +15,9 @@ import           OwO.Syntax.Position
 import           GHC.Generics        (Generic)
 
 #include <impossible.h>
+
+-- | Alias, for refactoring convenience
+type TextName = T.Text
 
 data NameType
   = BoundName
@@ -51,6 +56,7 @@ data ConstInfo
   = IntConst Int
   | IntegerConst Integer
   | StringConst String
+  | CharConst Char
   deriving (Eq, Generic, Ord, Show)
 
 -- | Core language term, @i@ refers to the identifier.
@@ -71,4 +77,11 @@ data Term' i
 
 -- TODO
 
-type Term = Term' QName
+-- | Term should have a @TextName@ coming from the parser
+type Term = Term' TextName
+-- | Aha! Dependent type!
+type Type = Term
+
+data Definition
+  = SimpleDefinition !Type !Term
+  deriving (Eq, Generic, Ord, Show)
