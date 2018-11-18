@@ -11,20 +11,20 @@ import           OwO.Syntax.Position
 import           GHC.Generics        (Generic)
 
 data PsiTerm
-  -- | A reference to a variable
   = PsiReference Loc QName
+  -- ^ A reference to a variable
   {-
-  -- | Second interval is the name
   | PsiLambda Loc QName Loc PsiTerm PsiTerm
+  -- ^ Second interval is the name
   -}
-  -- | Pattern variable
   | PsiPatternVar Loc QName
-  -- | Absurd pattern, impossible pattern
+  -- ^ Pattern variable
   | PsiImpossible Loc
-  -- | Dotted pattern
+  -- ^ Absurd pattern, impossible pattern
   | PsiDotPattern Loc PsiTerm
-  -- | Meta variable
+  -- ^ Dotted pattern
   | PsiMetaVar Loc QName
+  -- ^ Meta variable
   deriving (Eq, Generic, Ord, Show)
 
 -- | Program Structure Item: File Type
@@ -46,12 +46,14 @@ type QModuleName = QModuleName' String
 --   concrete name contains the source location (if any) of the name. The
 --   source location of the binding site is also recorded.
 data Name = Name
-  { nameId          :: !NameId
-  , nameConcrete    :: C.Name
-  , nameBindingSite :: Loc
+  { nameId         :: !NameId
+  , nameConcrete   :: C.Name
+  , nameBindingLoc :: Loc
   } deriving (Eq, Generic, Ord, Show)
 
 -- | Qualified name, with module name
+--   In definitions, the module name should be clear, so we add the module name
+--   information here
 data QName = QName
   { moduleName  :: QModuleName
   , concretName :: Name
@@ -71,14 +73,14 @@ data PsiFixityInfo
 
 -- | Function level pragma
 data FnPragma
-  -- | Do not reduce, disable termination check
   = NonTerminate
-  -- | Add to instance search
+  -- ^ Do not reduce, disable termination check
   | Instance
-  -- | Supposed to raise an error (Maybe specify the error type?)
+  -- ^ Add to instance search
   | Failing
-  -- | Disable termination check, unsafe
+  -- ^ Supposed to raise an error (Maybe specify the error type?)
   | Terminating
+  -- ^ Disable termination check, unsafe
   deriving (Eq, Generic, Ord, Show)
 
 type FnPragmas = [FnPragma]
@@ -91,19 +93,19 @@ data PsiDataCons' t = PsiDataCons
 
 -- | Inductive data family
 data PsiDataInfo' t
-  -- | An in-place definition
   = PsiDataDefinition
     { dataName     :: QName
     , dataNameLoc  :: Loc
     , dataTypeCons :: t
     , dataCons     :: [PsiDataCons' t]
     }
-  -- | A data type signature, for mutual recursion
+  -- ^ An in-place definition
   | PsiDataSignature
     { dataName     :: QName
     , dataNameLoc  :: Loc
     , dataTypeCons :: t
     } deriving (Eq, Functor, Generic, Ord, Show)
+  -- ^ A data type signature, for mutual recursion
 
 -- | One clause of a top-level definition. Term arguments to constructors are:
 --
@@ -112,16 +114,16 @@ data PsiDataInfo' t
 -- 3. The right-hand side
 -- 4. The where block (PDecl' t)
 data PsiPatternInfo' t
-  -- | Most simple pattern
   = PsiPatternSimple  Loc QName t [t] t [PsiDeclaration' t]
+  -- ^ Most simple pattern
   -- TODO
   {-
-  -- | Pattern with 'with', we may use the keyword 'case'
   | PsiPatternWith    Loc QName t [t] t [PsiDeclaration' t]
-  -- | Most simple pattern
+  -- ^ Pattern with 'with', we may use the keyword 'case'
   | PsiPatternSimpleR Loc         [t] t [PsiDeclaration' t]
-  -- | Pattern with 'with', we may use the keyword 'case'
+  -- ^ Most simple pattern
   | PsiPatternWithR   Loc         [t] t [PsiDeclaration' t]
+  -- ^ Pattern with 'with', we may use the keyword 'case'
   -}
   deriving (Eq, Generic, Functor, Ord, Show)
 
@@ -134,20 +136,20 @@ type DataPragmas = [DataPragma]
 -- | Top-level declarations
 --   TODOs: PsiCodata, PsiPattern, PsiCopattern
 data PsiDeclaration' t
-  -- | infix, infixl, infixr
   = PsiFixity Loc PsiFixityInfo [QName]
-  -- | Type signature
+  -- ^ infix, infixl, infixr
   | PsiType Loc QName FnPragmas t
-  -- | Module defined in modules
+  -- ^ Type signature
   | PsiSubmodule Loc QModuleName [PsiDeclaration' t]
-  -- | Postulate, unsafe
+  -- ^ Module defined in modules
   | PsiPostulate Loc QName FnPragmas t
-  -- | Primitive
+  -- ^ Postulate, unsafe
   | PsiPrimitive Loc QName t
-  -- | Inductive data families
+  -- ^ Primitive
   | PsiData Loc QName DataPragmas (PsiDataInfo' t)
-  -- | Inductive data families
+  -- ^ Inductive data families
   | PsiPattern Loc FnPragmas [PsiPatternInfo' t]
+  -- ^ Inductive data families
   deriving (Eq, Functor, Generic, Ord, Show)
 
 type PsiDeclaration = PsiDeclaration' PsiTerm
