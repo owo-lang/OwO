@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP               #-}
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module OwO.Syntax.Common where
@@ -7,6 +8,8 @@ import qualified Data.Text            as T
 import           Data.Word
 
 import qualified OwO.Util.StrictMaybe as Strict
+
+import           GHC.Generics         (Generic)
 
 #include <impossible.h>
 
@@ -18,7 +21,7 @@ import qualified OwO.Util.StrictMaybe as Strict
 --   identifier.
 data NameId =
   NameId {-# UNPACK #-} !Word64 {-# UNPACK #-} !Word64
-  deriving (Eq, Ord)
+  deriving (Eq, Generic, Ord)
 
 instance Show NameId where
   show (NameId n m) = show n ++ "@" ++ show m
@@ -39,7 +42,7 @@ instance Enum NameId where
 data MetaId = MetaId
   { metaId   :: !Word64
   , metaName :: Strict.Maybe String
-  } deriving (Eq, Ord)
+  } deriving (Eq, Generic, Ord)
 
 -- | Show non-record version of this newtype.
 instance Show MetaId where

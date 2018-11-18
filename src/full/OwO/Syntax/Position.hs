@@ -1,5 +1,6 @@
-{-# LANGUAGE CPP                #-}
-{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE CPP                  #-}
+{-# LANGUAGE DeriveGeneric        #-}
+{-# LANGUAGE StandaloneDeriving   #-}
 
 module OwO.Syntax.Position
   ( SrcFile
@@ -29,6 +30,8 @@ import           Data.Text            (Text)
 import           OwO.Util.List
 import qualified OwO.Util.StrictMaybe as Strict
 
+import           GHC.Generics         (Generic)
+
 -- | Represents a point in the input.
 --
 --   If two positions have the same 'srcFile' and 'posPos' components,
@@ -43,7 +46,7 @@ data Position' a = Pn
   , posPos  :: !Int32 -- ^ Position, counting from 0.
   , posLine :: !Int32 -- ^ Line number, counting from 0.
   , posCol  :: !Int32 -- ^ Column number, counting from 0.
-  } deriving (Show)
+  } deriving (Generic, Show)
 
 positionInvariant :: Position' a -> Bool
 positionInvariant p = posPos p > 0 && posLine p > 0 && posCol p > 0
@@ -66,7 +69,10 @@ type PositionNoFile = Position' ()
 -- | An interval. The @iEnd@ position is not included in the interval.
 --
 --   Note the invariant which intervals have to satisfy: 'intervalInvariant'.
-data Loc' a = Loc { iStart, iEnd :: !(Position' a) }
+data Loc' a = Loc
+  { iStart
+  , iEnd :: !(Position' a)
+  } deriving (Generic)
 
 deriving instance Show a => Show (Loc' a)
 deriving instance Eq a => Eq (Loc' a)

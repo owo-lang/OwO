@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TypeOperators #-}
 
 module OwO.Syntax.Abstract where
@@ -6,6 +7,8 @@ module OwO.Syntax.Abstract where
 import           OwO.Syntax.Common
 import qualified OwO.Syntax.Concret  as C
 import           OwO.Syntax.Position
+
+import           GHC.Generics        (Generic)
 
 data PsiTerm
   -- | A reference to a variable
@@ -22,19 +25,19 @@ data PsiTerm
   | PsiDotPattern Loc PsiTerm
   -- | Meta variable
   | PsiMetaVar Loc QName
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Generic, Ord, Show)
 
 -- | Program Structure Item: File Type
 data PsiFileType
   = CodeFileType
   | LiterateFileType
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Generic, Ord, Show)
 
 -- | Qualified Name
 data QModuleName' str
   = QLocalName str
   | str :.: QModuleName' str
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Generic, Ord, Show)
 
 -- | Specialized to String for convenience
 type QModuleName = QModuleName' String
@@ -46,21 +49,25 @@ data Name = Name
   { nameId          :: !NameId
   , nameConcrete    :: C.Name
   , nameBindingSite :: Loc
-  } deriving (Eq, Ord, Show)
+  } deriving (Eq, Generic, Ord, Show)
 
 -- | Qualified name, with module name
 data QName = QName
   { moduleName  :: QModuleName
   , concretName :: Name
-  } deriving (Eq, Ord, Show)
+  } deriving (Eq, Generic, Ord, Show)
 
 -- | Program Structure Item: File
 data PsiFile = PsiFile
   { fileType           :: PsiFileType
   , topLevelModuleName :: QModuleName
-  } deriving (Eq, Ord, Show)
+  } deriving (Eq, Generic, Ord, Show)
 
-type Fixity = Int
+data PsiFixityInfo
+  = PsiInfix
+  | PsiInfixL
+  | PsiInfixR
+  deriving (Eq, Generic, Ord, Show)
 
 -- | Function level pragma
 data FnPragma
@@ -72,7 +79,7 @@ data FnPragma
   | Failing
   -- | Disable termination check, unsafe
   | Terminating
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Generic, Ord, Show)
 
 type FnPragmas = [FnPragma]
 
@@ -80,7 +87,7 @@ data PsiDataCons' t = PsiDataCons
   { dataConsName :: QName
   , dataConsLoc  :: Loc
   , dataConsBody :: t
-  } deriving (Eq, Functor, Ord, Show)
+  } deriving (Eq, Functor, Generic, Ord, Show)
 
 -- | Inductive data family
 data PsiDataInfo' t
@@ -96,7 +103,7 @@ data PsiDataInfo' t
     { dataName     :: QName
     , dataNameLoc  :: Loc
     , dataTypeCons :: t
-    } deriving (Eq, Functor, Ord, Show)
+    } deriving (Eq, Functor, Generic, Ord, Show)
 
 -- | One clause of a top-level definition. Term arguments to constructors are:
 --
@@ -116,11 +123,11 @@ data PsiPatternInfo' t
   -- | Pattern with 'with', we may use the keyword 'case'
   | PsiPatternWithR   Loc         [t] t [PsiDeclaration' t]
   -}
-  deriving (Eq, Functor, Ord, Show)
+  deriving (Eq, Generic, Functor, Ord, Show)
 
 data DataPragma
   = NoPositivityCheck
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Generic, Ord, Show)
 
 type DataPragmas = [DataPragma]
 
@@ -128,7 +135,7 @@ type DataPragmas = [DataPragma]
 --   TODOs: PsiCodata, PsiPattern, PsiCopattern
 data PsiDeclaration' t
   -- | infix, infixl, infixr
-  = PsiFixity Loc Fixity [QName]
+  = PsiFixity Loc PsiFixityInfo [QName]
   -- | Type signature
   | PsiType Loc QName FnPragmas t
   -- | Module defined in modules
@@ -141,7 +148,7 @@ data PsiDeclaration' t
   | PsiData Loc QName DataPragmas (PsiDataInfo' t)
   -- | Inductive data families
   | PsiPattern Loc FnPragmas [PsiPatternInfo' t]
-  deriving (Eq, Functor, Ord, Show)
+  deriving (Eq, Functor, Generic, Ord, Show)
 
 type PsiDeclaration = PsiDeclaration' PsiTerm
 type PsiDataCons    = PsiDataCons' PsiTerm

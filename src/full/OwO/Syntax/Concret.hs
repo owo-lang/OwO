@@ -1,10 +1,14 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP           #-}
+{-# LANGUAGE DeriveGeneric #-}
+
 module OwO.Syntax.Concret where
 
 import           Data.Text
 
 import           OwO.Syntax.Common
 import           OwO.Syntax.Position
+
+import           GHC.Generics        (Generic)
 
 #include <impossible.h>
 
@@ -19,4 +23,4 @@ import           OwO.Syntax.Position
 data Name
   = Name   Loc Text   -- ^ A identifier.
   | NoName Loc NameId -- ^ @_@.
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Generic, Ord, Show)
