@@ -5,6 +5,8 @@
 
 module OwO.Syntax.Abstract where
 
+import qualified Data.Text           as Text
+
 import           OwO.Syntax.Common
 import qualified OwO.Syntax.Concret  as C
 import           OwO.Syntax.Position
@@ -35,13 +37,11 @@ data PsiFileType
   deriving (Eq, Generic, Ord, Show)
 
 -- | Qualified Name
-data QModuleName' str
-  = QLocalName str
-  | str :.: QModuleName' str
-  deriving (Eq, Generic, Ord, Show)
+newtype QModuleName = QModuleName { moduleNameList :: [String] }
+  deriving (Eq, Generic, Ord)
 
--- | Specialized to String for convenience
-type QModuleName = QModuleName' String
+instance Show QModuleName where
+  show (QModuleName ls) = concat $ ('.' :) <$> ls
 
 -- | A name is a unique identifier and a suggestion for a concrete name. The
 --   concrete name contains the source location (if any) of the name. The
@@ -51,6 +51,13 @@ data Name = Name
   , nameConcrete   :: C.Name
   , nameBindingLoc :: Loc
   } deriving (Eq, Generic, Ord, Show)
+
+mkName :: C.Name -> NameId -> Name
+mkName name id = Name
+  { nameId = id
+  , nameConcrete = name
+  , nameBindingLoc = C.locationOfName name
+  }
 
 -- | Qualified name, with module name
 --   In definitions, the module name should be clear, so we add the module name

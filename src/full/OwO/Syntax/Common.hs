@@ -23,6 +23,8 @@ data NameId =
   NameId {-# UNPACK #-} !Word64 {-# UNPACK #-} !Word64
   deriving (Eq, Generic, Ord)
 
+emptyNameId = NameId 0 0
+
 instance Show NameId where
   show (NameId n m) = show n ++ "@" ++ show m
 

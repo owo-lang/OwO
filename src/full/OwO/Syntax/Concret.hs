@@ -23,4 +23,12 @@ import           GHC.Generics        (Generic)
 data Name
   = Name   Loc Text   -- ^ A identifier.
   | NoName Loc NameId -- ^ @_@.
-  deriving (Eq, Generic, Ord, Show)
+  deriving (Generic, Ord, Show)
+
+locationOfName :: Name -> Loc
+locationOfName (Name   l _) = l
+locationOfName (NoName l _) = l
+
+instance Eq Name where
+  Name _ a   == Name _ b = a == b
+  _ == _ = False

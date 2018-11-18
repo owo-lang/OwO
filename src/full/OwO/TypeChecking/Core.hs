@@ -10,7 +10,7 @@ import           OwO.Syntax.Abstract
 import           OwO.Syntax.Common
 import           OwO.Syntax.Position
 
-import           GHC.Generics           (Generic)
+import           GHC.Generics        (Generic)
 
 #include <impossible.h>
 
@@ -34,9 +34,24 @@ data ULevel
   -- TypeInf, TypeOmega
   deriving (Eq, Generic, Ord, Show)
 
--- TODO, something like a lambda/let/pattern/etc
-data Binder i
+-- | i should be something like a @Term@
+data BinderInfo i
+  = LambdaBinder !i
+  -- ^ Lambda abstraction, type
+  {-
+  | Pi !i
+  -}
+  | LetBinder !i i
+  -- ^ Let binding, type and value
+  | NLetBinder !i i
+  -- ^ Intermediate value used for reduction
   deriving (Eq, Functor, Generic, Ord, Show)
+
+data ConstInfo
+  = IntConst Int
+  | IntegerConst Integer
+  | StringConst String
+  deriving (Eq, Generic, Ord, Show)
 
 -- | Core language term, @i@ refers to the identifier.
 --   We translate type-checked code into this form
@@ -44,13 +59,14 @@ data Term' i
   = App !(Term' i) (Term' i)
   -- ^ Application
   | Var !Int
-  -- ^ A variable resolved with de bruijin index
-  | P NameType i (Term' i)
+  -- ^ A variable resolved with de bruijn index
+  | Param NameType i (Term' i)
   -- ^ Named reference, might be external definitions
-  | Bind i !(Binder (Term' i)) (Term' i)
+  | Bind i !(BinderInfo (Term' i)) (Term' i)
   -- ^ Name binding
   | TType ULevel
   -- ^ Type of Type, including type omega
+  | Constant ConstInfo
   deriving (Eq, Functor, Generic, Ord, Show)
 
 -- TODO

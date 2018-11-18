@@ -1,6 +1,6 @@
-{-# LANGUAGE CPP                  #-}
-{-# LANGUAGE DeriveGeneric        #-}
-{-# LANGUAGE StandaloneDeriving   #-}
+{-# LANGUAGE CPP                #-}
+{-# LANGUAGE DeriveGeneric      #-}
+{-# LANGUAGE StandaloneDeriving #-}
 
 module OwO.Syntax.Position
   ( SrcFile
@@ -11,12 +11,14 @@ module OwO.Syntax.Position
   , PositionNoFile
   , positionInvariant
   , importantPart
+  , emptyPosition
 
   -- Locs
   , Loc'(..)
   , Loc
   , LocNoFile
   , intervalInvariant
+  , emptyLocation
   ) where
 
 import           Data.Foldable        (Foldable)
@@ -41,11 +43,11 @@ import           GHC.Generics         (Generic)
 --   messages for the user.
 --
 --   Note the invariant which positions have to satisfy: 'positionInvariant'.
-data Position' a = Pn
+data Position' a = Position
   { srcFile :: !a     -- ^ File.
-  , posPos  :: !Int32 -- ^ Position, counting from 0.
-  , posLine :: !Int32 -- ^ Line number, counting from 0.
-  , posCol  :: !Int32 -- ^ Column number, counting from 0.
+  , posPos  :: !Int32 -- ^ Position, counting from 1.
+  , posLine :: !Int32 -- ^ Line number, counting from 1.
+  , posCol  :: !Int32 -- ^ Column number, counting from 1.
   } deriving (Generic, Show)
 
 positionInvariant :: Position' a -> Bool
@@ -53,6 +55,14 @@ positionInvariant p = posPos p > 0 && posLine p > 0 && posCol p > 0
 
 importantPart :: Position' a -> (a, Int32)
 importantPart p = (srcFile p, posPos p)
+
+emptyPosition :: PositionNoFile
+emptyPosition = Position
+  { srcFile = ()
+  , posPos  = 0
+  , posLine = 0
+  , posCol  = 0
+  }
 
 instance Eq a => Eq (Position' a) where
   (==) = (==) `on` importantPart
@@ -95,3 +105,9 @@ consecutiveAndSeparated is =
   (null is ||
    and (zipWith (<) (iEnd   <$> init is)
                     (iStart <$> tail is)))
+
+emptyLocation :: LocNoFile
+emptyLocation = Loc
+  { iStart = emptyPosition
+  , iEnd   = emptyPosition
+  }
