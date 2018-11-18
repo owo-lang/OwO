@@ -27,7 +27,8 @@ $ sudo mv owo_completion /etc/.bash_completion.d/
 
 ### Code
 
-TODO
+Install the `stylish-haskell` extension to format the code easier.
+You should always format your code before pushing it.
 
 ### Emacs
 

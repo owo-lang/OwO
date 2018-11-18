@@ -40,6 +40,7 @@ allNames :: TCCtx a -> [(QModuleName, TextName)]
 allNames ctx = Map.toList ctx >>=
   \ (m, ns) -> (m,) <$> Map.keys ns
 
+-- | Lookup a definition in a known module
 lookupCtxWithName :: QModuleName -> TextName -> TCCtx a -> Maybe a
 lookupCtxWithName currentModule name ctx =
   Map.lookup currentModule ctx >>= Map.lookup name
@@ -61,6 +62,7 @@ data TCErr' t
   = OtherErr t
   deriving (Eq, Functor, Show)
 
+-- | TypeChecking Error
 type TCErr = TCErr' PsiTerm
 
 -- | TypeChecking Monad Transformer
