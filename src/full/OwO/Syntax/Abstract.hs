@@ -98,6 +98,26 @@ data PsiDataInfo' t
     , dataTypeCons :: t
     } deriving (Eq, Functor, Ord, Show)
 
+-- | One clause of a top-level definition. Term arguments to constructors are:
+--
+-- 1. The whole application (missing for PClauseR and PWithR because they're within a "with" clause)
+-- 2. The list of extra 'with' patterns
+-- 3. The right-hand side
+-- 4. The where block (PDecl' t)
+data PsiPatternInfo' t
+  -- | Most simple pattern
+  = PsiPatternSimple  Loc QName t [t] t [PsiDeclaration' t]
+  -- TODO
+  {-
+  -- | Pattern with 'with', we may use the keyword 'case'
+  | PsiPatternWith    Loc QName t [t] t [PsiDeclaration' t]
+  -- | Most simple pattern
+  | PsiPatternSimpleR Loc         [t] t [PsiDeclaration' t]
+  -- | Pattern with 'with', we may use the keyword 'case'
+  | PsiPatternWithR   Loc         [t] t [PsiDeclaration' t]
+  -}
+  deriving (Eq, Functor, Ord, Show)
+
 data DataPragma
   = NoPositivityCheck
   deriving (Eq, Ord, Show)
@@ -119,8 +139,11 @@ data PsiDeclaration' t
   | PsiPrimitive Loc QName t
   -- | Inductive data families
   | PsiData Loc QName DataPragmas (PsiDataInfo' t)
+  -- | Inductive data families
+  | PsiPattern Loc FnPragmas [PsiPatternInfo' t]
   deriving (Eq, Functor, Ord, Show)
 
-type PsiDeclaration  = PsiDeclaration' PsiTerm
+type PsiDeclaration = PsiDeclaration' PsiTerm
 type PsiDataCons    = PsiDataCons' PsiTerm
 type PsiDataInfo    = PsiDataInfo' PsiTerm
+type PsiPatternInfo = PsiPatternInfo' PsiTerm

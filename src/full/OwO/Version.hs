@@ -9,6 +9,7 @@ module OwO.Version
 import           Development.GitRev
 
 import           Data.List          (intercalate, map)
+import           Data.Maybe         (fromMaybe)
 import           Data.Version
 
 import qualified Paths_OwO          as PO
@@ -20,10 +21,7 @@ version = intercalate "." $
   show <$> versionBranch PO.version
 
 versionWithCommitInfo :: String
-versionWithCommitInfo = version ++
-  case commitInfo of
-    Nothing -> ""
-    Just i  -> '-' : i
+versionWithCommitInfo = version ++ fromMaybe "" (('-' :) <$> commitInfo)
 
 -- | Information about current git commit, generated at compile time
 commitInfo :: Maybe String
