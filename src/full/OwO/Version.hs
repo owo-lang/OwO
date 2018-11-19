@@ -21,7 +21,7 @@ version = intercalate "." $
   show <$> versionBranch PO.version
 
 versionWithCommitInfo :: String
-versionWithCommitInfo = version ++ fromMaybe "" (('-' :) <$> commitInfo)
+versionWithCommitInfo = version ++ maybe "" ('-' :) commitInfo
 
 -- | Information about current git commit, generated at compile time
 commitInfo :: Maybe String

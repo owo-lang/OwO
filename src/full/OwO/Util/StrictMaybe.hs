@@ -146,7 +146,7 @@ maybeM n j = (maybe n j =<<)
 
 -- | Monadic version of 'fromMaybe'.
 fromMaybeM :: Monad m => m a -> m (Maybe a) -> m a
-fromMaybeM m mm = maybeM m return mm
+fromMaybeM m = maybeM m return
 
 -- | Monadic version of 'caseMaybe'.
 --   That is, 'maybeM' with a different argument ordering.
@@ -160,7 +160,7 @@ ifJustM = flip . caseMaybeM
 -- | A more telling name for 'Traversable.forM' for the 'Maybe' collection type.
 --   Or: 'caseMaybe' without the 'Nothing' case.
 whenJust :: Monad m => Maybe a -> (a -> m ()) -> m ()
-whenJust m k = caseMaybe m (return ()) k
+whenJust m = caseMaybe m (return ())
 
 -- | 'caseMaybeM' without the 'Nothing' case.
 whenJustM :: Monad m => m (Maybe a) -> (a -> m ()) -> m ()

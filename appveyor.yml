@@ -21,6 +21,10 @@ skip_tags: true
 cache:
 - "c:\\sr"
 
+artifacts:
+- path: "C:\\Users\\appveyor\\AppData\\Roaming\\local\\bin\\owo.exe"
+  name: executable
+
 test_script:
 - stack setup --no-terminal > nul
 - stack build --only-snapshot --no-terminal

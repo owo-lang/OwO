@@ -12,7 +12,6 @@ import           Control.Monad
 import           Control.Monad.State
 import           Control.Monad.Trans.Except
 import qualified Data.Map                   as Map
-import           Data.Maybe                 (fromMaybe)
 
 import           OwO.Options
 import           OwO.Syntax.Abstract
@@ -51,9 +50,9 @@ lookupCtx (QName currentModule name) =
 
 -- | Overwriting
 addDefinitionWithName :: QModuleName -> TextName -> a -> TCCtx a -> TCCtx a
-addDefinitionWithName targetModule name a ctx = fromMaybe ctx $
-  (\ modifiedCtx -> Map.insert targetModule modifiedCtx ctx) <$>
-  Map.insert name a <$> Map.lookup targetModule ctx
+addDefinitionWithName targetModule name a ctx = maybe ctx $
+  (\ctx' -> Map.insert targetModule ctx' ctx) <$> Map.insert name a $
+  Map.lookup targetModule ctx
 
 addDefinition :: QName -> a -> TCCtx a -> TCCtx a
 addDefinition (QName currentModule name) =
@@ -72,7 +71,7 @@ data TCEnv = TypeCheckingEnv
   -- ^ This is passed all around
   } deriving (Generic, Show)
 
-data TCErr' t
+newtype TCErr' t
   = OtherErr t
   deriving (Eq, Functor, Show)
 

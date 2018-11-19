@@ -101,7 +101,7 @@ intervalInvariant i =
 consecutiveAndSeparated :: Ord a => [Loc' a] -> Bool
 consecutiveAndSeparated is =
   all intervalInvariant is &&
-  allEqual ((srcFile . iStart) <$> is) &&
+  allEqual (srcFile . iStart <$> is) &&
   (null is ||
    and (zipWith (<) (iEnd   <$> init is)
                     (iStart <$> tail is)))
