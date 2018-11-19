@@ -16,9 +16,11 @@ environment:
     # See https://github.com/haskell/cabal/issues/5386
     TMP: "c:\\tmp"
 
+skip_tags: true
+
+cache:
+- "c:\\sr"
+
 test_script:
-- stack setup
-# The ugly echo "" hack is to avoid complaints about 0 being an invalid file
-# descriptor
-# - echo "" | stack --no-terminal test
-- echo "" | stack install
+- stack setup --no-terminal > nul
+- stack build --only-snapshot --no-terminal
