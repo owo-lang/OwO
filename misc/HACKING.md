@@ -34,7 +34,7 @@ $ sudo mv owo_completion /etc/.bash_completion.d/
 You can run `hlint` with this command:
 
 ```shell
-$ hlint src --cpp-include=src/full
+$ hlint src
 ```
 
 ## Coding convention
