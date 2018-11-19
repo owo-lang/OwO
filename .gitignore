@@ -20,6 +20,9 @@ cabal.project.local
 cabal.project.local~
 .HTF/
 .ghc.environment.*
+
+## Editors ##
 .vscode
 .idea
 .vs
+*.iml

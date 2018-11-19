@@ -8,7 +8,7 @@ module OwO.Syntax.Abstract where
 import qualified Data.Text           as T
 
 import           OwO.Syntax.Common
-import qualified OwO.Syntax.Concret  as C
+import qualified OwO.Syntax.Concrete as C
 import           OwO.Syntax.Position
 
 import           GHC.Generics        (Generic)

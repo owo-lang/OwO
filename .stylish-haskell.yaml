@@ -2,27 +2,27 @@
 
 steps:
   - simple_align:
-    cases: true
-    top_level_patterns: true
-    records: true
+      cases: true
+      top_level_patterns: true
+      records: true
 
   - imports:
-    align: global
-    list_align: after_alias
-    pad_module_names: true
-    long_list_align: multiline
-    empty_list_align: inherit
-    list_padding: 4
-    separate_lists: true
-    space_surround: false
+      align: global
+      list_align: after_alias
+      pad_module_names: true
+      long_list_align: multiline
+      empty_list_align: inherit
+      list_padding: 4
+      separate_lists: true
+      space_surround: false
 
   - language_pragmas:
-    style: vertical
-    align: true
-    remove_redundant: true
+      style: vertical
+      align: true
+      remove_redundant: true
 
   - tabs:
-    spaces: 8
+      spaces: 8
 
   - trailing_whitespace: {}
 

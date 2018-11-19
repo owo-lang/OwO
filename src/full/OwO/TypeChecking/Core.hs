@@ -4,7 +4,17 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 
 -- | Core language
-module OwO.TypeChecking.Core where
+module OwO.TypeChecking.Core
+  ( TextName
+  , NameType(..)
+  , ULevel(..)
+  , BinderInfo(..)
+  , ConstInfo(..)
+  , Term'(..)
+  , Term
+  , Type
+  , Definition(..)
+  ) where
 
 import qualified Data.Text           as T
 
@@ -84,4 +94,5 @@ type Type = Term
 
 data Definition
   = SimpleDefinition !Type !Term
+  -- ^ No type signature, just an expression with type specified
   deriving (Eq, Generic, Ord, Show)

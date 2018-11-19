@@ -24,3 +24,4 @@ cache:
 test_script:
 - stack setup --no-terminal > nul
 - stack build --only-snapshot --no-terminal
+- stack install --no-terminal

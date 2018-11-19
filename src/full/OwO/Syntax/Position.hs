@@ -13,7 +13,7 @@ module OwO.Syntax.Position
   , importantPart
   , emptyPosition
 
-  -- Locs
+  -- Locations
   , Loc'(..)
   , Loc
   , LocNoFile

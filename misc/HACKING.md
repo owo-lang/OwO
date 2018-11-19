@@ -31,6 +31,10 @@ $ owo --bash-completion-script $(which owo) >> owo_completion
 $ sudo mv owo_completion /etc/.bash_completion.d/
 ```
 
+## Coding convention
+
++ Functions/record projections should be camelCase
+
 ## Setup your editor
 
 ### Code

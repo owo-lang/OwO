@@ -59,7 +59,7 @@ library
 
                   , OwO.Syntax.Abstract
                   , OwO.Syntax.Common
-                  , OwO.Syntax.Concret
+                  , OwO.Syntax.Concrete
                   , OwO.Syntax.Position
 
                   , OwO.TypeChecking.Core
