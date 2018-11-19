@@ -21,7 +21,7 @@ import           GHC.Generics        (Generic)
     in different locations are equal.
 -}
 data Name
-  = Name   Loc Text   -- ^ A identifier.
+  = Name   Loc T.Text   -- ^ A identifier.
   | NoName Loc NameId -- ^ @_@.
   deriving (Generic, Ord, Show)
 

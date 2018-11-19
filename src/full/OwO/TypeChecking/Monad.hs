@@ -46,7 +46,7 @@ lookupCtxWithName currentModule name ctx =
   Map.lookup currentModule ctx >>= Map.lookup name
 
 lookupCtx :: QName -> TCCtx a -> Maybe a
-lookupCtx (QName currentModule name) = lookupCtxWithName currentModule $ nameConcret name
+lookupCtx (QName currentModule name) = lookupCtxWithName currentModule $ simpleName name
 
 -- | Overwriting
 addDefinitionWithName :: QModuleName -> TextName -> a -> TCCtx a -> TCCtx a
@@ -54,8 +54,8 @@ addDefinitionWithName targetModule name a ctx = fromMaybe ctx $
   (\ modifiedCtx -> Map.insert targetModule modifiedCtx ctx) <$>
   Map.insert name a <$> Map.lookup targetModule ctx
 
-addDefinition :: QName -> a -> TCCtx a -> Maybe a
-addDefinition (QName currentModule name) = lookupCtxWithName currentModule $ nameConcret name  
+addDefinition :: QName -> a -> TCCtx a -> TCCtx a
+addDefinition (QName currentModule name) = addDefinitionWithName currentModule $ simpleName name
 
 -- | TypeChecking State. I haven't decide on whether to store warnings here
 --   (but errors should definitely be in the other side of the Monad)

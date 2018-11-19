@@ -67,8 +67,11 @@ data QName = QName
   , concretName :: Name
   } deriving (Eq, Generic, Ord, Show)
 
-simpleName :: QName -> T.Text
-simpleName = textOfName . nameConcrete . concretName
+simpleQName :: QName -> T.Text
+simpleQName = C.textOfName . nameConcrete . concretName
+
+simpleName :: Name -> T.Text
+simpleName = C.textOfName . nameConcrete
 
 -- | Program Structure Item: File
 data PsiFile = PsiFile
