@@ -31,11 +31,21 @@ $ owo --bash-completion-script $(which owo) >> owo_completion
 $ sudo mv owo_completion /etc/.bash_completion.d/
 ```
 
+You can run `hlint` with this command:
+
+```shell
+$ hlint src --cpp-include=src/full
+```
+
 ## Coding convention
 
 + Functions/record projections should be camelCase
 
 ## Setup your editor
+
+### IntelliJ-Haskell
+
+You're basically all set.
 
 ### Code
 

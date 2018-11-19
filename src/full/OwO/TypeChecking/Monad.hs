@@ -50,9 +50,9 @@ lookupCtx (QName currentModule name) =
 
 -- | Overwriting
 addDefinitionWithName :: QModuleName -> TextName -> a -> TCCtx a -> TCCtx a
-addDefinitionWithName targetModule name a ctx = maybe ctx $
-  (\ctx' -> Map.insert targetModule ctx' ctx) <$> Map.insert name a $
-  Map.lookup targetModule ctx
+addDefinitionWithName targetModule name a ctx = maybe ctx
+  ((\ctx' -> Map.insert targetModule ctx' ctx) <$> Map.insert name a)
+  (Map.lookup targetModule ctx)
 
 addDefinition :: QName -> a -> TCCtx a -> TCCtx a
 addDefinition (QName currentModule name) =
