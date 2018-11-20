@@ -20,6 +20,7 @@ skip_tags: true
 
 cache:
 - "c:\\sr"
+- "c:\\Users\appveyor\\AppData\\Local\\Programs\\stack"
 
 artifacts:
 - path: "bin\\owo.exe"
