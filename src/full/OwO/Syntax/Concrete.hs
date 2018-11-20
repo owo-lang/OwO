@@ -35,8 +35,8 @@ locationOfName (NoName l _) = l
 
 textOfName :: Name -> T.Text
 textOfName (Name   _ n) = n
-textOfName (NoName _ _) = T.pack "_"
+textOfName (NoName _ n) = T.pack $ "_" ++ show n
 
 instance Eq Name where
-  Name _ a   == Name _ b = a == b
+  Name _ a == Name _ b = a == b
   _ == _ = False

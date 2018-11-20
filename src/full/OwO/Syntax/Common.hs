@@ -23,6 +23,7 @@ data NameId =
   NameId {-# UNPACK #-} !Word64 {-# UNPACK #-} !Word64
   deriving (Eq, Generic, Ord)
 
+emptyNameId :: NameId
 emptyNameId = NameId 0 0
 
 instance Show NameId where

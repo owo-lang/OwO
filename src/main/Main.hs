@@ -1,8 +1,8 @@
 module Main (main) where
 
-import OwO.Main (runOwO)
+import           OwO.Main     (runOwO)
 
-import OptionParser (options)
+import           OptionParser (options)
 
 main :: IO ()
 main = options >>= runOwO

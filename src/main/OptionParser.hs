@@ -2,9 +2,9 @@ module OptionParser
   ( options
   ) where
 
-import Options.Applicative
+import           Options.Applicative
 
-import OwO.Options
+import           OwO.Options
 
 options :: IO CmdOptions
 options = customExecParser pref $ info (helper <*> opts)
