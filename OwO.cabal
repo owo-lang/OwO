@@ -61,6 +61,7 @@ library
                   , OwO.Syntax.Common
                   , OwO.Syntax.Concrete
                   , OwO.Syntax.Position
+                  , OwO.Syntax.TokenType
 
                   , OwO.TypeChecking.Core
                   , OwO.TypeChecking.Match
