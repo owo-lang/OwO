@@ -1,34 +1,17 @@
 build: off
 
-before_test:
-# http://help.appveyor.com/discussions/problems/6312-curl-command-not-found
-- set PATH=C:\Program Files\Git\mingw64\bin;%PATH%
-
-- curl -sS -ostack.zip -L --insecure http://www.stackage.org/stack/windows-i386
-- 7z x stack.zip stack.exe
-
-clone_folder: "c:\\stack"
-environment:
-  global:
-    STACK_ROOT: "c:\\sr"
-
-    # Override the temp directory to avoid sed escaping issues
-    # See https://github.com/haskell/cabal/issues/5386
-    TMP: "c:\\tmp"
+before_build:
+- choco install -y cabal
+- choco install -y ghc --version 8.4.3
 
 skip_tags: true
 
-cache:
-- "c:\\sr"
-- "c:\\Users\appveyor\\AppData\\Local\\Programs\\stack"
-
 artifacts:
-- path: "bin\\owo.exe"
+- path: "dist\\build\\owo\\owo.exe"
   name: executable
 
-test_script:
-- stack setup --no-terminal > nul
-- stack install --no-terminal alex
-- refreshenv
-- stack build --only-snapshot --no-terminal
-- stack install --no-terminal --local-bin-path bin
+build_script:
+- cabal update
+- cabal install alex
+- cabal install --only-dependencies --enable-tests --enable-benchmarks
+- cabal build
