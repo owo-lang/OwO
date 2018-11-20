@@ -23,6 +23,8 @@ jobs:
           key: cci-demo-haskell-v1-{{ checksum "OwO.cabal" }}
           paths:
             - ".stack-work"
+            - "~/.cabal"
+            - "~/.stack"
       - store_artifacts:
           path: ~/.local/bin/owo
           destination: owo

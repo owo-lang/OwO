@@ -22,10 +22,10 @@ cache:
 - "c:\\sr"
 
 artifacts:
-- path: "C:\\Users\\appveyor\\AppData\\Roaming\\local\\bin\\owo.exe"
+- path: "bin\\owo.exe"
   name: executable
 
 test_script:
 - stack setup --no-terminal > nul
 - stack build --only-snapshot --no-terminal
-- stack install --no-terminal
+- stack install --no-terminal --local-bin-path bin
