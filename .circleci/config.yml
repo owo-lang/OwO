@@ -16,6 +16,9 @@ jobs:
           # name: Run tests
           # command: stack test
       - run:
+          name: Install alex
+          command: stack install alex
+      - run:
           name: Install executable
           command: stack install
       - store_artifacts:

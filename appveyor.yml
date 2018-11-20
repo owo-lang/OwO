@@ -28,5 +28,7 @@ artifacts:
 
 test_script:
 - stack setup --no-terminal > nul
+- stack install --no-terminal alex
+- refreshenv
 - stack build --only-snapshot --no-terminal
 - stack install --no-terminal --local-bin-path bin

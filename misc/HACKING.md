@@ -7,6 +7,7 @@ To build a development version, install cabal and ghc and run:
 ```shell
 $ git clone https://github.com/owo-lang/OwO
 $ cd OwO
+$ cabal install alex
 $ cabal install
 ```
 
@@ -15,6 +16,7 @@ You can also use stack, no problem:
 ```shell
 $ git clone https://github.com/owo-lang/OwO
 $ cd OwO
+$ stack install alex
 $ stack install
 ```
 
