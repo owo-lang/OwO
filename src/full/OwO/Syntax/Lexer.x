@@ -21,7 +21,11 @@ $white_no_nl = $white # \n
 @number               = $digit +
 @module               = module
 @where                = where
+@open                 = open
+@import               = import
 @identifier           = [A-Za-z][A-Za-z'_]*
+@dataType             = data
+@codataType           = codata
 
 tokens :-
   $white_no_nl+            ;

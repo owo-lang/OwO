@@ -6,15 +6,16 @@ import           OwO.Syntax.Position
 
 data TokenType
   = InaccessiblePatternLToken
-  -- * Dot pattern left
+  -- ^ Dot pattern left
   | InaccessiblePatternRToken
-  -- * Dot pattern left
+  -- ^ Dot pattern right
   | ModuleToken
   | WhereToken
+  | OpenToken
+  | ImportToken
   | BracketLToken
-  -- ^ Lists
   | BracketRToken
-  -- ^ Lists
+  -- ^ List literal
   | ParenthesisLToken
   | ParenthesisRToken
   | IdentifierToken
@@ -31,6 +32,8 @@ data TokenType
   -- ^ {
   | BraceRToken
   -- ^ }
+  | DataTypeToken
+  | CodataTypeToken
   deriving (Eq, Generic, Ord, Show)
 
 data PsiToken = PsiToken

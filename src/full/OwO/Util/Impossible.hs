@@ -24,12 +24,12 @@ data Impossible
 instance Show Impossible where
   -- Sell moe
   show (Impossible file line) = unlines
-    [ "An internal ewor has occurred. Pwease wrepwort this as a bug OwO."
-    , "Location of the ewor: " ++ file ++ ":" ++ show line
+    [ "An internal ewor has occurred. Pwease rwepowt this as a bug OwO."
+    , "Location of the erwor: " ++ file ++ ":" ++ show line
     ]
   show (Unreachable file line) = unlines
-    [ "We wreached a pwogwam point we did not want to wreach OwO."
-    , "Location of the ewor: " ++ file ++ ":" ++ show line
+    [ "We rweached a pwogwam point we did not want to rweach OwO."
+    , "Location of the erwor: " ++ file ++ ":" ++ show line
     ]
 
 instance Exception Impossible
