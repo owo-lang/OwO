@@ -2,6 +2,9 @@
 module OwO.Syntax.Lexer where
 
 import OwO.Syntax.TokenType
+import OwO.Syntax.Position
+
+import qualified OwO.Util.StrictMaybe as Strict
 }
 
 %wrapper "monadUserState"
@@ -42,18 +45,22 @@ alexEOF = do
   l <- getLayout
   case l of
     Just (Layout _) -> do
-      _ <- popLayout
+      alex <- popLayout
       pure $ PsiToken
         { tokenType = LayoutEndToken
-        , location  =
+        -- TODO
+        , location  = emptyLocationIn Strict.Nothing
         }
     Just  NoLayout  -> do
       _ <- popLayout
       alexMonadScan
-    Nothing -> pure $ PsiToken
-      { tokenType = LayoutEndToken
-      , location  = 
-      }
+    Nothing -> do
+      alex <- popLayout
+      pure $ PsiToken
+        { tokenType = LayoutEndToken
+        -- TODO
+        , location  = emptyLocationIn Strict.Nothing
+        }
 
 pushLayout :: LayoutContext -> Alex ()
 pushLayout lc = do

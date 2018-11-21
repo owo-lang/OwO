@@ -46,7 +46,7 @@ data ULevel
   | ULevelVar String Int
   -- ^ Level varaibles. Should be already computed.
   | ULevelMax
-  -- TypeInf, TypeOmega
+  -- ^ TypeInf, TypeOmega
   deriving (Eq, Generic, Ord, Show)
 
 -- | i should be something like a @Term@

@@ -12,6 +12,8 @@ module OwO.Syntax.Position
   , positionInvariant
   , importantPart
   , emptyPosition
+  , emptyPositionIn
+  , emptyPositionInStr
 
   -- Locations
   , Loc'(..)
@@ -19,6 +21,8 @@ module OwO.Syntax.Position
   , LocNoFile
   , intervalInvariant
   , emptyLocation
+  , emptyLocationIn
+  , emptyLocationInStr
   ) where
 
 import           Data.Foldable        (Foldable)
@@ -28,6 +32,7 @@ import           Data.Int
 import           Data.Sequence        (Seq)
 import qualified Data.Sequence        as Seq
 import           Data.Text            (Text)
+import qualified Data.Text            as T
 
 import           OwO.Util.List
 import qualified OwO.Util.StrictMaybe as Strict
@@ -55,6 +60,17 @@ positionInvariant p = posPos p > 0 && posLine p > 0 && posCol p > 0
 
 importantPart :: Position' a -> (a, Int32)
 importantPart p = (srcFile p, posPos p)
+
+emptyPositionInStr :: String -> Position
+emptyPositionInStr = emptyPositionIn . Strict.Just . T.pack
+
+emptyPositionIn :: SrcFile -> Position
+emptyPositionIn src = Position
+  { srcFile = src
+  , posPos  = 0
+  , posLine = 0
+  , posCol  = 0
+  }
 
 emptyPosition :: PositionNoFile
 emptyPosition = Position
@@ -105,6 +121,15 @@ consecutiveAndSeparated is =
   (null is ||
    and (zipWith (<) (iEnd   <$> init is)
                     (iStart <$> tail is)))
+
+emptyLocationInStr :: String -> Loc
+emptyLocationInStr = emptyLocationIn . Strict.Just . T.pack
+
+emptyLocationIn :: SrcFile -> Loc
+emptyLocationIn src = Loc
+  { iStart = emptyPositionIn src
+  , iEnd   = emptyPositionIn src
+  }
 
 emptyLocation :: LocNoFile
 emptyLocation = Loc
