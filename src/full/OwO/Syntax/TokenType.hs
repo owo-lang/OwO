@@ -19,6 +19,18 @@ data TokenType
   | ParenthesisRToken
   | IdentifierToken
   | EndOfFileToken
+  | LayoutEndToken
+  -- ^ Finish a layout
+  | ColonToken
+  | NumberToken
+  | LeftArrowToken
+  -- ^ <-
+  | RightArrowToken
+  -- ^ ->
+  | BraceLToken
+  -- ^ {
+  | BraceRToken
+  -- ^ }
   deriving (Eq, Generic, Ord, Show)
 
 data PsiToken = PsiToken
@@ -30,3 +42,22 @@ data LayoutContext
   = NoLayout
   | Layout Int
   deriving (Eq, Generic, Ord, Show)
+
+-- | See @OwO.Syntax.Position@
+data AlexUserState = AlexUserState
+  { layoutStack     :: [LayoutContext]
+  , currentLocation :: !Int
+  , currentLine     :: !Int
+  , currentColumn   :: !Int
+  , alexStartCodes  :: [Int]
+  } deriving (Eq, Generic, Show)
+
+-- | See @OwO.Syntax.Position@
+alexInitUserState :: AlexUserState
+alexInitUserState = AlexUserState
+  { layoutStack     = []
+  , currentLocation = 1
+  , currentLine     = 1
+  , currentColumn   = 1
+  , alexStartCodes  = []
+  }

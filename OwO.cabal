@@ -26,7 +26,8 @@ flag debug
   description: Enable debugging features that may slow OwO down.
 
 library
-  build-depends:  base >= 4.8 && < 5
+  build-depends:  array
+                , base >= 4.8 && < 5
                 , binary >= 0.7.3.0 && < 0.9
                 , containers >= 0.5.10 && < 0.7
                 , deepseq >= 1.4.1.1 && < 1.5
@@ -62,6 +63,7 @@ library
                   , OwO.Syntax.Concrete
                   , OwO.Syntax.Position
                   , OwO.Syntax.TokenType
+                  -- , OwO.Syntax.Lexer
 
                   , OwO.TypeChecking.Core
                   , OwO.TypeChecking.Match
