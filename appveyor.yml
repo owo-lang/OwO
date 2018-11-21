@@ -2,7 +2,8 @@ build: off
 
 before_build:
 - choco install -y cabal
-- choco install -y ghc --version 8.4.3
+- choco install -y ghc --version 8.4.4
+- refreshenv
 
 skip_tags: true
 
