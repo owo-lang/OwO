@@ -1,8 +1,10 @@
 {-# LANGUAGE DeriveGeneric #-}
 module OwO.Syntax.TokenType where
 
-import           GHC.Generics        (Generic)
 import           OwO.Syntax.Position
+import qualified OwO.Util.StrictMaybe as Strict
+
+import           GHC.Generics         (Generic)
 
 data TokenType
   = InaccessiblePatternLToken
@@ -49,9 +51,8 @@ data LayoutContext
 -- | See @OwO.Syntax.Position@
 data AlexUserState = AlexUserState
   { layoutStack     :: [LayoutContext]
-  , currentLocation :: !Int
-  , currentLine     :: !Int
-  , currentColumn   :: !Int
+  , currentFile     :: SrcFile
+  , currentPosition :: !PositionNoFile
   , alexStartCodes  :: [Int]
   } deriving (Eq, Generic, Show)
 
@@ -59,8 +60,7 @@ data AlexUserState = AlexUserState
 alexInitUserState :: AlexUserState
 alexInitUserState = AlexUserState
   { layoutStack     = []
-  , currentLocation = 1
-  , currentLine     = 1
-  , currentColumn   = 1
+  , currentFile     = Strict.Nothing
+  , currentPosition = emptyPosition
   , alexStartCodes  = []
   }

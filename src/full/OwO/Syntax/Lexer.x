@@ -31,7 +31,7 @@ $white_no_nl = $white # \n
 @codataType           = codata
 
 tokens :-
-  $white_no_nl+            ;
+  $white_no_nl             { newLine >> skip }
 
 {
 
@@ -40,26 +40,37 @@ beginCode n _ _ = do
   pushLexState n
   alexMonadScan
 
+newLine :: AlexAction ()
+newLine _ _ = do
+  s@AlexUserState { currentPosition = pos } <- alexGetUserState
+  let newPos = pos { posLine = posLine pos + 1
+                   , posPos  = posPos  pos + 1
+                   , posCol  = 0
+                   }
+  alexSetUserState s { currentPosition = newPos }
+
 alexEOF :: Alex PsiToken
 alexEOF = do
   l <- getLayout
   case l of
     Just (Layout _) -> do
       alex <- popLayout
+      file <- currentFile <$> alexGetUserState
       pure $ PsiToken
         { tokenType = LayoutEndToken
         -- TODO
-        , location  = emptyLocationIn Strict.Nothing
+        , location  = emptyLocationIn file
         }
     Just  NoLayout  -> do
       _ <- popLayout
       alexMonadScan
     Nothing -> do
       alex <- popLayout
+      file <- currentFile <$> alexGetUserState
       pure $ PsiToken
         { tokenType = LayoutEndToken
         -- TODO
-        , location  = emptyLocationIn Strict.Nothing
+        , location  = emptyLocationIn file
         }
 
 pushLayout :: LayoutContext -> Alex ()

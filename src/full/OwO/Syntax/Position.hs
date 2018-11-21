@@ -80,6 +80,14 @@ emptyPosition = Position
   , posCol  = 0
   }
 
+positionWithFile :: PositionNoFile -> SrcFile -> Position
+positionWithFile pos src = Position
+  { srcFile = src
+  , posPos  = posPos  pos
+  , posCol  = posCol  pos
+  , posLine = posLine pos
+  }
+
 instance Eq a => Eq (Position' a) where
   (==) = (==) `on` importantPart
 
