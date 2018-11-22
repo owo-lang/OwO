@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
+
 module OwO.Syntax.TokenType where
 
 import           OwO.Syntax.Position

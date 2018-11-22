@@ -15,5 +15,3 @@ runOwO opts = do
 printVersion :: IO ()
 printVersion = putStrLn $
   "OwO " ++ versionWithCommitInfo
-
-

@@ -41,7 +41,7 @@ $ hlint src
 
 ## Coding convention
 
-+ Functions/record projections should be camelCase
+* Functions/record projections should be camelCase
 
 ## Setup your editor
 
@@ -60,6 +60,22 @@ Configure your workspace:
 ```json
 {
     "ghcSimple.workspaceType": "stack"
+}
+```
+
+You can also install the extension `Run On Save` to simply run the formatter on
+saving your `*.hs` file, by giving such commands in settings:
+
+```json
+{
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "\\.hs$",
+                "cmd": "stylish-haskell -i ${file}"
+            }
+        ]
+    }
 }
 ```
 
