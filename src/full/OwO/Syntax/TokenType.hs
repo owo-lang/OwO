@@ -2,6 +2,8 @@
 
 module OwO.Syntax.TokenType where
 
+import           Data.Text            as T
+
 import           OwO.Syntax.Position
 import qualified OwO.Util.StrictMaybe as Strict
 
@@ -21,7 +23,7 @@ data TokenType
   -- ^ List literal
   | ParenthesisLToken
   | ParenthesisRToken
-  | IdentifierToken
+  | IdentifierToken T.Text
   | EndOfFileToken
   | LayoutEndToken
   -- ^ Finish a layout

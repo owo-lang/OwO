@@ -31,9 +31,18 @@ $white_no_nl = $white # \n
 @codataType           = codata
 
 tokens :-
-  $white_no_nl          { newLine >> skip }
-  @module               { simple ModuleToken }
-  @inaccessiblePatternL { simple InaccessiblePatternLToken }
+
+$white_no_nl            { newLine >> skip }
+@module                 { simple ModuleToken }
+@inaccessiblePatternL   { simple InaccessiblePatternLToken }
+
+<0> {
+  \n                    { beginCode bol }
+}
+
+<bol> {
+  \n                    { newLine >> skip }
+}
 
 {
 
