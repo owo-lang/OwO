@@ -1,5 +1,5 @@
 {
-module OwO.Syntax.Lexer where
+module OwO.Syntax.Parser.Lexer where
 
 import OwO.Syntax.TokenType
 import OwO.Syntax.Position
@@ -31,7 +31,9 @@ $white_no_nl = $white # \n
 @codataType           = codata
 
 tokens :-
-  $white_no_nl             { newLine >> skip }
+  $white_no_nl          { newLine >> skip }
+  @module               { simple ModuleToken }
+  @inaccessiblePatternL { simple InaccessiblePatternLToken }
 
 {
 
@@ -39,6 +41,16 @@ beginCode :: Int -> AlexAction PsiToken
 beginCode n _ _ = do
   pushLexState n
   alexMonadScan
+
+simple :: TokenType -> AlexAction PsiToken
+simple t _ _ = do
+  state    <- alexGetUserState
+  let file = currentFile state
+  let pos  = currentPosition state
+  pure  $ PsiToken
+    { tokenType = t
+    , location  = emptyLocationIn file
+    }
 
 newLine :: AlexAction ()
 newLine _ _ = do
@@ -54,9 +66,10 @@ alexEOF = do
   l <- getLayout
   case l of
     Just (Layout _) -> do
-      alex <- popLayout
-      file <- currentFile <$> alexGetUserState
-      pure $ PsiToken
+      alex     <- popLayout
+      state    <- alexGetUserState
+      let file = currentFile state
+      pure     $ PsiToken
         { tokenType = LayoutEndToken
         -- TODO
         , location  = emptyLocationIn file
@@ -65,9 +78,10 @@ alexEOF = do
       _ <- popLayout
       alexMonadScan
     Nothing -> do
-      alex <- popLayout
-      file <- currentFile <$> alexGetUserState
-      pure $ PsiToken
+      alex     <- popLayout
+      state    <- alexGetUserState
+      let file = currentFile state
+      pure     $ PsiToken
         { tokenType = LayoutEndToken
         -- TODO
         , location  = emptyLocationIn file

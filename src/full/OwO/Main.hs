@@ -5,7 +5,7 @@ module OwO.Main
 import           OwO.Options
 import           OwO.Version    (versionWithCommitInfo)
 
-import           OwO.Util.Monad
+import           OwO.Util.Applicative
 
 runOwO :: CmdOptions -> IO ()
 runOwO opts = do

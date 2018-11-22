@@ -1,9 +1,11 @@
 module Main where
 
-import Test.Hspec
+-- import Test.Hspec
+
+import Prelude hiding (lex)
+import OwO.Syntax.Parser
 
 main :: IO ()
-main = hspec $ do
-  describe "Simple Test" $ do
-    it "should work" $ do
-      (2 + 2) `shouldBe` 4
+main = print . lex $
+ "module A where\n" ++
+ "a = b"
