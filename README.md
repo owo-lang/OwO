@@ -10,11 +10,15 @@
 
 The compiler of the OwO pwogwamming langwage. WIP.
 
-This pwogwamming langwage is inspired by Agda, Idris, Haskell and many
-other nice pwogwamming langwages.
+Thisu pwogwamming langwage is inspired by Agda, Idwisu, Haskellu and many
+other nisu pwogwamming langwagezu.
 
-+ Development guide: [HACKING](./misc/HACKING.md)
-+ Website (WIP) [repo](https://github.com/owo-lang/owo-lang.github.io)
++ Dewelopmento guido: [HACKING](./misc/HACKING.md)
++ Webusaito (WIP) [repo](https://github.com/owo-lang/owo-lang.github.io)
+
+## How to pwonounsu OwO
+
+/'əʊwəʊ/
 
 ## License
 

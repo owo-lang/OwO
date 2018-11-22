@@ -2,8 +2,8 @@ module Main where
 
 -- import Test.Hspec
 
-import Prelude hiding (lex)
-import OwO.Syntax.Parser
+import           OwO.Syntax.Parser
+import           Prelude           hiding (lex)
 
 main :: IO ()
 main = print . lex $

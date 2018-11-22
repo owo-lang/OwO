@@ -1,9 +1,10 @@
 module OwO.Syntax.Parser where
 
-import System.FilePath
+import           Prelude                 hiding (lex)
+import           System.FilePath
 
-import OwO.Syntax.TokenType
-import OwO.Syntax.Parser.Lexer
+import           OwO.Syntax.Parser.Lexer
+import           OwO.Syntax.TokenType
 
 scanAll :: Alex [PsiToken]
 scanAll = do

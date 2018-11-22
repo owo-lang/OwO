@@ -124,7 +124,7 @@ data PsiDataInfo' t
 -- | One clause of a top-level definition. Term arguments to constructors are:
 --
 -- 1. The whole application (missing for PClauseR and PWithR because they're
--- within a "with" clause)
+--    within a "with" clause)
 -- 2. The list of extra 'with' patterns
 -- 3. The right-hand side
 -- 4. The where block (PDecl' t)
