@@ -14,6 +14,7 @@ module OwO.Syntax.Position
   , emptyPosition
   , emptyPositionIn
   , emptyPositionInStr
+  , positionWithFile
 
   -- Locations
   , Loc'(..)

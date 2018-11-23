@@ -4,6 +4,7 @@ module OwO.Syntax.Parser.Lexer where
 import OwO.Syntax.TokenType
 import OwO.Syntax.Position
 
+import qualified Data.Text            as T
 import qualified OwO.Util.StrictMaybe as Strict
 }
 
@@ -61,31 +62,34 @@ simple t _ _ = do
     , location  = emptyLocationIn file
     }
 
+simpleString :: (T.Text -> a) -> AlexAction a
+simpleString f (_, _, _, s) len = pure . f . T.pack $ take len s
+
 alexEOF :: Alex PsiToken
 alexEOF = do
   l <- getLayout
   case l of
-    Just (Layout _) -> do
-      alex     <- popLayout
-      state    <- alexGetUserState
-      let file = currentFile state
-      pure     $ PsiToken
-        { tokenType = LayoutEndToken
-        -- TODO
-        , location  = emptyLocationIn file
-        }
+    Nothing         -> java
+    Just (Layout _) -> java
     Just  NoLayout  -> do
-      _ <- popLayout
+      popLayout
       alexMonadScan
-    Nothing -> do
-      alex     <- popLayout
-      state    <- alexGetUserState
-      let file = currentFile state
-      pure     $ PsiToken
-        { tokenType = LayoutEndToken
-        -- TODO
-        , location  = emptyLocationIn file
-        }
+  where
+    java = do
+       alex    <- popLayout
+       posInt  <- posPos <$> getPosition
+       file    <- currentFile <$> alexGetUserState
+       let pwf = Position
+             { srcFile = ()
+             , posPos  = posInt
+             , posLine = posInt
+             , posCol  = posInt
+             }
+       let pos = positionWithFile pwf file
+       pure    $ PsiToken
+         { tokenType = LayoutEndToken
+         , location  = Loc { iStart = pos, iEnd = pos }
+         }
 
 getPosition :: Alex PositionNoFile
 getPosition = do
