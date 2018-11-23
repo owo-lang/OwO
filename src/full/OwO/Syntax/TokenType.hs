@@ -50,6 +50,8 @@ data TokenType
   -- ^ }
   | EqualToken
   -- ^ =
+  | DotToken
+  -- ^ .
 
   | IdentifierToken T.Text
   -- ^ identifier

@@ -1,4 +1,6 @@
 {
+{-# LANGUAGE LambdaCase #-}
+
 module OwO.Syntax.Parser.Lexer where
 
 import OwO.Syntax.TokenType
@@ -38,6 +40,7 @@ postulate     { newLayoutContext >> simple PostulateToken }
 \[            { simple BracketLToken }
 \]            { simple BracketRToken }
 \=            { simple EqualToken }
+\.            { simple DotToken }
 
 <0> {
   \n          { beginCode bol }
@@ -66,14 +69,10 @@ simpleString :: (T.Text -> a) -> AlexAction a
 simpleString f (_, _, _, s) len = pure . f . T.pack $ take len s
 
 alexEOF :: Alex PsiToken
-alexEOF = do
-  l <- getLayout
-  case l of
+alexEOF = getLayout >>= \case
     Nothing         -> java
     Just (Layout _) -> java
-    Just  NoLayout  -> do
-      popLayout
-      alexMonadScan
+    Just  NoLayout  -> popLayout >> alexMonadScan
   where
     java = do
        (AlexPn pos line col, _, _, _) <- alexGetInput
