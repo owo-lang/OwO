@@ -49,9 +49,11 @@ data TokenType
   | RightArrowToken
   -- ^ ->
   | BraceLToken
-  -- ^ {
+  -- ^ {, implicit/instance arguments, starts a layout
   | BraceRToken
-  -- ^ }
+  -- ^ }, finishes a layout
+  | SemicolonToken
+  -- ^ ;, finishes a line
   | EqualToken
   -- ^ =
   | DotToken
@@ -62,12 +64,6 @@ data TokenType
   | IntegerToken Integer
   -- ^ integer numbers
 
-  | BeginOfLayoutToken
-  -- ^ starts a layout
-  | EndOfLayoutToken
-  -- ^ finishes a layout
-  | EndOfDirectiveToken
-  -- ^ finishes a line (like a semicolon)
   | EndOfFileToken
   -- ^ finishes a file
   deriving (Eq, Generic, Ord, Show)

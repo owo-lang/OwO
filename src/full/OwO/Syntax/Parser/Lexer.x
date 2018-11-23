@@ -3,11 +3,12 @@
 
 module OwO.Syntax.Parser.Lexer where
 
-import OwO.Syntax.TokenType
-import OwO.Syntax.Position
+import           OwO.Syntax.TokenType
+import           OwO.Syntax.Position
 
 import qualified Data.Text            as T
 import qualified OwO.Util.StrictMaybe as Strict
+import           OwO.Util.Applicative
 }
 
 %wrapper "monadUserState"
@@ -21,40 +22,41 @@ $white_no_nl = $white # \n
 tokens :-
 
 $white_no_nl  ;
-module        { simple ModuleToken }
-open          { simple OpenToken }
-data          { simple DataToken }
-codata        { simple CodataToken }
-import        { simple ImportToken }
-where         { newLayoutContext >> simple WhereToken }
-postulate     { newLayoutContext >> simple PostulateToken }
-infix         { simple InfixToken }
-infixl        { simple InfixLToken }
-infixr        { simple InfixRToken }
-@integer      { simpleString (IntegerToken . read) }
-@identifier   { simpleString (IdentifierToken . T.pack) }
-\<\-          { simple LeftArrowToken }
-\-\>          { simple RightArrowToken }
-\:            { simple ColonToken }
-\[\|          { simple InaccessiblePatternLToken }
-\|\]          { simple InaccessiblePatternRToken }
-\(            { simple ParenthesisLToken }
-\)            { simple ParenthesisRToken }
-\{            { simple BraceLToken }
-\}            { simple BraceRToken }
-\[            { simple BracketLToken }
-\]            { simple BracketRToken }
-\=            { simple EqualToken }
-\.            { simple DotToken }
 
 <layout> {
   \n          ;
+  \{          { explicitBraceLeft }
   ()          { newLayoutContext }
 }
 
 <0> {
   \n          { beginCode bol }
+  module      { simple ModuleToken }
+  open        { simple OpenToken }
+  data        { simple DataToken }
+  codata      { simple CodataToken }
+  import      { simple ImportToken }
   where       { simple WhereToken }
+  postulate   { simple PostulateToken }
+  infixl      { simple InfixLToken }
+  infixr      { simple InfixRToken }
+  infix       { simple InfixToken }
+  @integer    { simpleString (IntegerToken . read) }
+  @identifier { simpleString (IdentifierToken . T.pack) }
+  \<\-        { simple LeftArrowToken }
+  \-\>        { simple RightArrowToken }
+  \:          { simple ColonToken }
+  \;          { simple SemicolonToken }
+  \[\|        { simple InaccessiblePatternLToken }
+  \|\]        { simple InaccessiblePatternRToken }
+  \(          { simple ParenthesisLToken }
+  \)          { simple ParenthesisRToken }
+  \{          { simple BraceLToken }
+  \}          { simple BraceRToken }
+  \[          { simple BracketLToken }
+  \]          { simple BracketRToken }
+  \=          { simple EqualToken }
+  \.          { simple DotToken }
 }
 
 <bol> {
@@ -65,19 +67,25 @@ infixr        { simple InfixRToken }
 {
 
 beginCode :: Int -> AlexAction PsiToken
-beginCode n _ _ = do
-  pushLexState n
-  alexMonadScan
+beginCode n _ _ = pushLexState n >> alexMonadScan
 
 simple :: TokenType -> AlexAction PsiToken
-simple t ((AlexPn pos line col), _, _, _) size = do
+simple token ((AlexPn pos line col), _, _, _) size = do
   file <- currentFile <$> alexGetUserState
   let start = simplePosition (pos - size) line (col - size)
   let end   = simplePosition pos line col
+  -- run `pushLexState` when it's `where` or `postulate`
+  isStartingNewLayout token `ifM` pushLexState layout
   pure $ PsiToken
-    { tokenType = t
+    { tokenType = token
     , location  = locationFromSegment start end file
     }
+
+explicitBraceLeft :: AlexAction PsiToken
+explicitBraceLeft ((AlexPn pos line col), _, _, _) size = do
+  popLexState
+  pushLayout NoLayout
+  toMonadPsi pos line col size BraceLToken
 
 simpleString :: (String -> TokenType) -> AlexAction PsiToken
 simpleString f ((AlexPn pos line col), _, _, s) size =
@@ -101,14 +109,14 @@ alexEOF = getLayout >>= \case
   where
     java = do
        (AlexPn pos line col, _, _, _) <- alexGetInput
-       toMonadPsi pos line col 0 EndOfLayoutToken
+       toMonadPsi pos line col 0 BraceRToken
 
 doBol :: AlexAction PsiToken
 doBol ((AlexPn pos line col), _, _, _) size =
   getLayout >>= \case
     Just (Layout n) -> case col `compare` n of
-      LT -> popLayout >> pure EndOfLayoutToken >>= addToken
-      EQ -> popLexState >> pure EndOfDirectiveToken >>= addToken
+      LT -> popLayout >> addToken BraceRToken
+      EQ -> popLexState >> addToken SemicolonToken
       GT -> popLexState >> alexMonadScan
     _ -> popLexState >> alexMonadScan
   where
@@ -118,7 +126,7 @@ newLayoutContext :: AlexAction PsiToken
 newLayoutContext ((AlexPn pos line col), _, _, _) size = do
   popLexState
   pushLayout $ Layout col
-  toMonadPsi pos line col size BeginOfLayoutToken
+  toMonadPsi pos line col size BraceLToken
 
 pushLayout :: LayoutContext -> Alex ()
 pushLayout lc = do
@@ -137,9 +145,9 @@ popLayout = do
 getLayout :: Alex (Maybe LayoutContext)
 getLayout = do
   AlexUserState { layoutStack = lcs } <- alexGetUserState
-  case lcs of
-    []     -> pure Nothing
-    lc : _ -> pure (Just lc)
+  pure $ case lcs of
+    []     -> Nothing
+    lc : _ -> Just lc
 
 pushLexState :: Int -> Alex ()
 pushLexState nsc = do
