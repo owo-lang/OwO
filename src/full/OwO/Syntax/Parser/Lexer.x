@@ -37,6 +37,7 @@ postulate     { newLayoutContext >> simple PostulateToken }
 \}            { simple BraceRToken }
 \[            { simple BracketLToken }
 \]            { simple BracketRToken }
+\=            { simple EqualToken }
 
 <0> {
   \n          { beginCode bol }
@@ -54,9 +55,8 @@ beginCode n _ _ = do
   alexMonadScan
 
 simple :: TokenType -> AlexAction PsiToken
-simple t _ _ = do
+simple t ((AlexPn _ _ col), _, _, _) _ = do
   file <- currentFile <$> alexGetUserState
-  let pos = getPosition
   pure  $ PsiToken
     { tokenType = t
     , location  = emptyLocationIn file
@@ -76,36 +76,24 @@ alexEOF = do
       alexMonadScan
   where
     java = do
-       alex    <- popLayout
-       posInt  <- posPos <$> getPosition
-       file    <- currentFile <$> alexGetUserState
+       (AlexPn pos line col, _, _, _) <- alexGetInput
+       file <- currentFile <$> alexGetUserState
        let pwf = Position
              { srcFile = ()
-             , posPos  = posInt
-             , posLine = posInt
-             , posCol  = posInt
+             , posPos  = pos
+             , posLine = line
+             , posCol  = col
              }
        let pos = positionWithFile pwf file
-       pure    $ PsiToken
+       pure $ PsiToken
          { tokenType = LayoutEndToken
          , location  = Loc { iStart = pos, iEnd = pos }
          }
 
-getPosition :: Alex PositionNoFile
-getPosition = do
-  (AlexPn pos line col, _, _, _) <- alexGetInput
-  pure $ Position
-    { srcFile = ()
-    , posPos  = pos
-    , posLine = line
-    , posCol  = col
-    }
-
 newLayoutContext :: AlexAction ()
-newLayoutContext _ _ = do
+newLayoutContext ((AlexPn _ _ col), _, _, _) _ = do
   popLexState
-  pos <- getPosition
-  pushLayout . Layout $ posCol pos
+  pushLayout $ Layout col
 
 pushLayout :: LayoutContext -> Alex ()
 pushLayout lc = do

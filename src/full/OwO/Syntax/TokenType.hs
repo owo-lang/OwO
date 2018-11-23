@@ -48,12 +48,17 @@ data TokenType
   -- ^ {
   | BraceRToken
   -- ^ }
+  | EqualToken
+  -- ^ =
 
   | IdentifierToken T.Text
+  -- ^ identifier
   | NumberToken
-  | EndOfFileToken
+  -- ^ numbers
   | LayoutEndToken
-  -- ^ Finish a layout
+  -- ^ finishes a layout
+  | EndOfFileToken
+  -- ^ finishes a file
   deriving (Eq, Generic, Ord, Show)
 
 isStartingNewLayout :: TokenType -> Bool
@@ -73,15 +78,15 @@ data LayoutContext
 
 -- | See @OwO.Syntax.Position@
 data AlexUserState = AlexUserState
-  { layoutStack     :: [LayoutContext]
-  , currentFile     :: SrcFile
-  , alexStartCodes  :: [Int]
+  { layoutStack    :: [LayoutContext]
+  , currentFile    :: SrcFile
+  , alexStartCodes :: [Int]
   } deriving (Eq, Generic, Show)
 
 -- | See @OwO.Syntax.Position@
 alexInitUserState :: AlexUserState
 alexInitUserState = AlexUserState
-  { layoutStack     = []
-  , currentFile     = Strict.Nothing
-  , alexStartCodes  = []
+  { layoutStack    = []
+  , currentFile    = Strict.Nothing
+  , alexStartCodes = []
   }
