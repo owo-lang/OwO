@@ -1,0 +1,38 @@
+module Data where
+
+-- | A simple sum type.
+data Bool : Type where
+  false : Bool
+  true : Bool
+
+-- | Generalized algebraic data type (GADT).
+data Nat : Type where
+  zero : Nat
+  succ : Nat -> Nat
+
+-- | Generalized algebraic codata type (GACT).  Note that the pred is a partial
+--   function.
+codata CoNat : Type where
+  iszero : Bool
+  pred : iszero == false -> CoNat
+
+n0 : Nat
+n0 = zero
+
+n1 : Nat
+n1 = succ zero
+
+n2 : Nat
+n2 = succ (succ zero)
+
+co0 : CoNat
+co0 [| iszero |] = true
+co0 [| pred |] () -- an absurd pattern
+
+co1 : CoNat
+co1 [| iszero |] = false
+co1 [| pred |] = co0
+
+co2 : CoNat
+co2 [| iszero |] = false
+co2 [| pred |] = co1

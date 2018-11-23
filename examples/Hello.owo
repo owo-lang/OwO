@@ -1,0 +1,8 @@
+{--
+ -  This is a multi-line comment.
+ -}
+
+-- This is a single-line comment.
+
+-- | An empty module.
+module Hello where
