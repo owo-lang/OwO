@@ -103,13 +103,13 @@ toMonadPsi pos line col size token = do
 
 alexEOF :: Alex PsiToken
 alexEOF = getLayout >>= \case
-    Nothing         -> java
-    Just (Layout _) -> java
+    Nothing         -> java EndOfFileToken
+    Just (Layout _) -> popLayout >> java BraceRToken
     Just  NoLayout  -> popLayout >> alexMonadScan
   where
-    java = do
+    java token = do
        (AlexPn pos line col, _, _, _) <- alexGetInput
-       toMonadPsi pos line col 0 BraceRToken
+       toMonadPsi pos line col 0 token
 
 doBol :: AlexAction PsiToken
 doBol ((AlexPn pos line col), _, _, _) size =

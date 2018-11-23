@@ -7,5 +7,5 @@ import           Prelude           hiding (lex)
 
 main :: IO ()
 main = print . lex $
- "module Bla + where\n" ++
+ "module Bla where\n" ++
  "  a = b"
