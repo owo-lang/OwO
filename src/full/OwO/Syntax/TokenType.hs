@@ -25,6 +25,10 @@ data TokenType
   | CodataToken
   -- ^ codata
 
+  | InfixToken
+  | InfixLToken
+  | InfixRToken
+
   | WhereToken
   -- ^ where, starting a new layout
   | PostulateToken

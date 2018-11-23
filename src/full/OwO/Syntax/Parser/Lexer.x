@@ -28,6 +28,9 @@ codata        { simple CodataToken }
 import        { simple ImportToken }
 where         { newLayoutContext >> simple WhereToken }
 postulate     { newLayoutContext >> simple PostulateToken }
+infix         { simple InfixToken }
+infixl        { simple InfixLToken }
+infixr        { simple InfixRToken }
 \<\-          { simple LeftArrowToken }
 \-\>          { simple RightArrowToken }
 \:            { simple ColonToken }
