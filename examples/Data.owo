@@ -1,5 +1,7 @@
 module Data where
 
+open import OwO.Equality
+
 -- | A simple sum type.
 data Bool : Type where
   false : Bool
@@ -25,14 +27,18 @@ n1 = succ zero
 n2 : Nat
 n2 = succ (succ zero)
 
+(+) : Nat -> Nat -> Nat
+zero     + n = n
+(succ m) + n = succ (m + n)
+
 co0 : CoNat
-co0 [| iszero |] = true
-co0 [| pred |] () -- an absurd pattern
+iszero co0 = true
+pred   co0 () -- an absurd pattern
 
 co1 : CoNat
-co1 [| iszero |] = false
-co1 [| pred |] = co0
+iszero co1 = false
+pred   co1 = co0
 
 co2 : CoNat
-co2 [| iszero |] = false
-co2 [| pred |] = co1
+iszero co2 = false
+pred   co2 = co1
