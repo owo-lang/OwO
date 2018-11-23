@@ -15,20 +15,31 @@ data TokenType
   | InaccessiblePatternRToken
   -- ^ Dot pattern right
   | ModuleToken
-  | WhereToken
+  -- ^ module
   | OpenToken
+  -- ^ open
   | ImportToken
+  -- ^ import
+  | DataToken
+  -- ^ data
+  | CodataToken
+  -- ^ codata
+
+  | WhereToken
+  -- ^ where, starting a new layout
+  | PostulateToken
+  -- ^ postulate, starting a new layout
+
   | BracketLToken
+  -- ^ ], for `List` literal
   | BracketRToken
-  -- ^ List literal
+  -- ^ [, for `List` literal
   | ParenthesisLToken
+  -- ^ (
   | ParenthesisRToken
-  | IdentifierToken T.Text
-  | EndOfFileToken
-  | LayoutEndToken
-  -- ^ Finish a layout
+  -- ^ )
   | ColonToken
-  | NumberToken
+  -- ^ :
   | LeftArrowToken
   -- ^ <-
   | RightArrowToken
@@ -37,9 +48,18 @@ data TokenType
   -- ^ {
   | BraceRToken
   -- ^ }
-  | DataTypeToken
-  | CodataTypeToken
+
+  | IdentifierToken T.Text
+  | NumberToken
+  | EndOfFileToken
+  | LayoutEndToken
+  -- ^ Finish a layout
   deriving (Eq, Generic, Ord, Show)
+
+isStartingNewLayout :: TokenType -> Bool
+isStartingNewLayout WhereToken     = True
+isStartingNewLayout PostulateToken = True
+isStartingNewLayout _              = False
 
 data PsiToken = PsiToken
   { tokenType :: TokenType

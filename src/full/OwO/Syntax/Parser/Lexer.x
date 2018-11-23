@@ -12,36 +12,37 @@ import qualified OwO.Util.StrictMaybe as Strict
 $digit = [0-9]
 $white_no_nl = $white # \n
 
-@inaccessiblePatternL = \{\|
-@inaccessiblePatternR = \|\}
-@braceL               = \{
-@braceR               = \}
-@parenthesisL         = \(
-@parenthesisR         = \)
-@leftArrow            = \<\-
-@rightArrow           = \-\>
-@colon                = :
 @number               = $digit +
-@module               = module
-@where                = where
-@open                 = open
-@import               = import
 @identifier           = [A-Za-z][A-Za-z'_]*
-@dataType             = data
-@codataType           = codata
 
 tokens :-
 
-$white_no_nl            { newLine >> skip }
-@module                 { simple ModuleToken }
-@inaccessiblePatternL   { simple InaccessiblePatternLToken }
+$white_no_nl  { newLine >> skip }
+module        { simple ModuleToken }
+open          { simple OpenToken }
+data          { simple DataToken }
+codata        { simple CodataToken }
+import        { simple ImportToken }
+where         { newLayoutContext >> simple WhereToken }
+postulate     { newLayoutContext >> simple PostulateToken }
+\<\-          { simple LeftArrowToken }
+\-\>          { simple RightArrowToken }
+\:            { simple ColonToken }
+\[\|          { simple InaccessiblePatternLToken }
+\|\]          { simple InaccessiblePatternRToken }
+\(            { simple ParenthesisLToken }
+\)            { simple ParenthesisRToken }
+\{            { simple BraceLToken }
+\}            { simple BraceRToken }
+\[            { simple BracketLToken }
+\]            { simple BracketRToken }
 
 <0> {
-  \n                    { beginCode bol }
+  \n          { beginCode bol }
 }
 
 <bol> {
-  \n                    { newLine >> skip }
+  \n          { newLine >> skip }
 }
 
 {
@@ -95,6 +96,17 @@ alexEOF = do
         -- TODO
         , location  = emptyLocationIn file
         }
+
+getOffset :: Alex Int
+getOffset = do
+  (AlexPn _ _ column, _, _, _) <- alexGetInput
+  pure column
+
+newLayoutContext :: AlexAction ()
+newLayoutContext _ _ = do
+  popLexState
+  offset <- getOffset
+  pushLayout $ Layout offset
 
 pushLayout :: LayoutContext -> Alex ()
 pushLayout lc = do
