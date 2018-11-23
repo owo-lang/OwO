@@ -61,8 +61,13 @@ data TokenType
   -- ^ identifier
   | IntegerToken Integer
   -- ^ integer numbers
-  | LayoutEndToken
+
+  | BeginOfLayoutToken
+  -- ^ starts a layout
+  | EndOfLayoutToken
   -- ^ finishes a layout
+  | EndOfDirectiveToken
+  -- ^ finishes a line (like a semicolon)
   | EndOfFileToken
   -- ^ finishes a file
   deriving (Eq, Generic, Ord, Show)

@@ -15,7 +15,7 @@ import qualified OwO.Util.StrictMaybe as Strict
 $digit       = [0-9]
 $white_no_nl = $white # \n
 
-@integer     = $digit +
+@integer     = $digit+
 @identifier  = [A-Za-z][0-9A-Za-z'_]*
 
 tokens :-
@@ -47,12 +47,19 @@ infixr        { simple InfixRToken }
 \=            { simple EqualToken }
 \.            { simple DotToken }
 
+<layout> {
+  \n          ;
+  ()          { newLayoutContext }
+}
+
 <0> {
   \n          { beginCode bol }
+  where       { simple WhereToken }
 }
 
 <bol> {
   \n          ;
+  ()          { doBol }
 }
 
 {
@@ -74,16 +81,17 @@ simple t ((AlexPn pos line col), _, _, _) size = do
 
 simpleString :: (String -> TokenType) -> AlexAction PsiToken
 simpleString f ((AlexPn pos line col), _, _, s) size =
-   toMonadPsi . f $ take size s
-  where
-    toMonadPsi token = do
-      file <- currentFile <$> alexGetUserState
-      let start = simplePosition (pos - size) line (col - size)
-      let end   = simplePosition pos line col
-      pure $ PsiToken
-        { tokenType = token
-        , location  = locationFromSegment start end file
-        }
+   toMonadPsi pos line col size . f $ take size s
+
+toMonadPsi :: Int -> Int -> Int -> Int -> TokenType -> Alex PsiToken
+toMonadPsi pos line col size token = do
+  file <- currentFile <$> alexGetUserState
+  let start = simplePosition (pos - size) line (col - size)
+  let end   = simplePosition pos line col
+  pure $ PsiToken
+    { tokenType = token
+    , location  = locationFromSegment start end file
+    }
 
 alexEOF :: Alex PsiToken
 alexEOF = getLayout >>= \case
@@ -93,17 +101,24 @@ alexEOF = getLayout >>= \case
   where
     java = do
        (AlexPn pos line col, _, _, _) <- alexGetInput
-       file <- currentFile <$> alexGetUserState
-       let position = simplePosition pos line col
-       pure $ PsiToken
-         { tokenType = LayoutEndToken
-         , location  = locationFromSegment position position file
-         }
+       toMonadPsi pos line col 0 EndOfLayoutToken
 
-newLayoutContext :: AlexAction ()
-newLayoutContext ((AlexPn _ _ col), _, _, _) _ = do
+doBol :: AlexAction PsiToken
+doBol ((AlexPn pos line col), _, _, _) size =
+  getLayout >>= \case
+    Just (Layout n) -> case col `compare` n of
+      LT -> popLayout >> pure EndOfLayoutToken >>= addToken
+      EQ -> popLexState >> pure EndOfDirectiveToken >>= addToken
+      GT -> popLexState >> alexMonadScan
+    _ -> popLexState >> alexMonadScan
+  where
+    addToken = toMonadPsi pos line col size
+
+newLayoutContext :: AlexAction PsiToken
+newLayoutContext ((AlexPn pos line col), _, _, _) size = do
   popLexState
   pushLayout $ Layout col
+  toMonadPsi pos line col size BeginOfLayoutToken
 
 pushLayout :: LayoutContext -> Alex ()
 pushLayout lc = do
