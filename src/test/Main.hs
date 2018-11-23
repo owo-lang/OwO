@@ -5,7 +5,13 @@ module Main where
 import           OwO.Syntax.Parser
 import           Prelude           hiding (lex)
 
+lexAndPrint = print . lex
+
 main :: IO ()
-main = print . lex $
- "module Bla where\n" ++
- "  a = b"
+main = do
+  lexAndPrint $ "module Bla where\n" ++
+                "  a = b"
+  lexAndPrint $ "data Bla : Type where\n" ++
+                "  Rua : B"
+  lexAndPrint $ "codata Bla : Type where\n" ++
+                "  oRA : B"
