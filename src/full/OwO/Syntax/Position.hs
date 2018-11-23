@@ -11,6 +11,7 @@ module OwO.Syntax.Position
   , PositionNoFile
   , positionInvariant
   , importantPart
+  , simplePosition
   , emptyPosition
   , emptyPositionIn
   , emptyPositionInStr
@@ -24,6 +25,7 @@ module OwO.Syntax.Position
   , emptyLocation
   , emptyLocationIn
   , emptyLocationInStr
+  , locationFromSegment
   ) where
 
 import           Data.Foldable        (Foldable)
@@ -73,13 +75,16 @@ emptyPositionIn src = Position
   , posCol  = 0
   }
 
-emptyPosition :: PositionNoFile
-emptyPosition = Position
+simplePosition :: Int -> Int -> Int -> PositionNoFile
+simplePosition pos line col = Position
   { srcFile = ()
-  , posPos  = 0
-  , posLine = 0
-  , posCol  = 0
+  , posPos  = pos
+  , posLine = line
+  , posCol  = col
   }
+
+emptyPosition :: PositionNoFile
+emptyPosition = simplePosition 0 0 0
 
 positionWithFile :: PositionNoFile -> SrcFile -> Position
 positionWithFile pos src = Position
@@ -144,4 +149,10 @@ emptyLocation :: LocNoFile
 emptyLocation = Loc
   { iStart = emptyPosition
   , iEnd   = emptyPosition
+  }
+
+locationFromSegment :: PositionNoFile -> PositionNoFile -> SrcFile -> Loc
+locationFromSegment start end src = Loc
+  { iStart = positionWithFile start src
+  , iEnd   = positionWithFile end   src
   }

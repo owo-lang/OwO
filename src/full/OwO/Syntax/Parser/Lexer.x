@@ -12,11 +12,11 @@ import qualified OwO.Util.StrictMaybe as Strict
 
 %wrapper "monadUserState"
 
-$digit = [0-9]
+$digit       = [0-9]
 $white_no_nl = $white # \n
 
-@number               = $digit +
-@identifier           = [A-Za-z][A-Za-z'_]*
+@integer     = $digit +
+@identifier  = [A-Za-z][0-9A-Za-z'_]*
 
 tokens :-
 
@@ -31,6 +31,8 @@ postulate     { newLayoutContext >> simple PostulateToken }
 infix         { simple InfixToken }
 infixl        { simple InfixLToken }
 infixr        { simple InfixRToken }
+@integer      { simpleString (IntegerToken . read) }
+@identifier   { simpleString (IdentifierToken . T.pack) }
 \<\-          { simple LeftArrowToken }
 \-\>          { simple RightArrowToken }
 \:            { simple ColonToken }
@@ -61,15 +63,27 @@ beginCode n _ _ = do
   alexMonadScan
 
 simple :: TokenType -> AlexAction PsiToken
-simple t ((AlexPn _ _ col), _, _, _) _ = do
+simple t ((AlexPn pos line col), _, _, _) size = do
   file <- currentFile <$> alexGetUserState
-  pure  $ PsiToken
+  let start = simplePosition (pos - size) line (col - size)
+  let end   = simplePosition pos line col
+  pure $ PsiToken
     { tokenType = t
-    , location  = emptyLocationIn file
+    , location  = locationFromSegment start end file
     }
 
-simpleString :: (T.Text -> a) -> AlexAction a
-simpleString f (_, _, _, s) len = pure . f . T.pack $ take len s
+simpleString :: (String -> TokenType) -> AlexAction PsiToken
+simpleString f ((AlexPn pos line col), _, _, s) size =
+   toMonadPsi . f $ take size s
+  where
+    toMonadPsi token = do
+      file <- currentFile <$> alexGetUserState
+      let start = simplePosition (pos - size) line (col - size)
+      let end   = simplePosition pos line col
+      pure $ PsiToken
+        { tokenType = token
+        , location  = locationFromSegment start end file
+        }
 
 alexEOF :: Alex PsiToken
 alexEOF = getLayout >>= \case
@@ -80,16 +94,10 @@ alexEOF = getLayout >>= \case
     java = do
        (AlexPn pos line col, _, _, _) <- alexGetInput
        file <- currentFile <$> alexGetUserState
-       let pwf = Position
-             { srcFile = ()
-             , posPos  = pos
-             , posLine = line
-             , posCol  = col
-             }
-       let pos = positionWithFile pwf file
+       let position = simplePosition pos line col
        pure $ PsiToken
          { tokenType = LayoutEndToken
-         , location  = Loc { iStart = pos, iEnd = pos }
+         , location  = locationFromSegment position position file
          }
 
 newLayoutContext :: AlexAction ()

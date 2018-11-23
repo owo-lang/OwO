@@ -59,8 +59,8 @@ data TokenType
 
   | IdentifierToken T.Text
   -- ^ identifier
-  | NumberToken
-  -- ^ numbers
+  | IntegerToken Integer
+  -- ^ integer numbers
   | LayoutEndToken
   -- ^ finishes a layout
   | EndOfFileToken
