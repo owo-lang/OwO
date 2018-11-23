@@ -17,7 +17,7 @@ $white_no_nl = $white # \n
 
 tokens :-
 
-$white_no_nl  { newLine >> skip }
+$white_no_nl  ;
 module        { simple ModuleToken }
 open          { simple OpenToken }
 data          { simple DataToken }
@@ -42,7 +42,7 @@ postulate     { newLayoutContext >> simple PostulateToken }
 }
 
 <bol> {
-  \n          { newLine >> skip }
+  \n          ;
 }
 
 {
@@ -54,22 +54,12 @@ beginCode n _ _ = do
 
 simple :: TokenType -> AlexAction PsiToken
 simple t _ _ = do
-  state    <- alexGetUserState
-  let file = currentFile state
-  let pos  = currentPosition state
+  file <- currentFile <$> alexGetUserState
+  let pos = getPosition
   pure  $ PsiToken
     { tokenType = t
     , location  = emptyLocationIn file
     }
-
-newLine :: AlexAction ()
-newLine _ _ = do
-  s@AlexUserState { currentPosition = pos } <- alexGetUserState
-  let newPos = pos { posLine = posLine pos + 1
-                   , posPos  = posPos  pos + 1
-                   , posCol  = 0
-                   }
-  alexSetUserState s { currentPosition = newPos }
 
 alexEOF :: Alex PsiToken
 alexEOF = do
@@ -97,16 +87,21 @@ alexEOF = do
         , location  = emptyLocationIn file
         }
 
-getOffset :: Alex Int
-getOffset = do
-  (AlexPn _ _ column, _, _, _) <- alexGetInput
-  pure column
+getPosition :: Alex PositionNoFile
+getPosition = do
+  (AlexPn pos line col, _, _, _) <- alexGetInput
+  pure $ Position
+    { srcFile = ()
+    , posPos  = pos
+    , posLine = line
+    , posCol  = col
+    }
 
 newLayoutContext :: AlexAction ()
 newLayoutContext _ _ = do
   popLexState
-  offset <- getOffset
-  pushLayout $ Layout offset
+  pos <- getPosition
+  pushLayout . Layout $ posCol pos
 
 pushLayout :: LayoutContext -> Alex ()
 pushLayout lc = do

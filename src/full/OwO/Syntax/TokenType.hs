@@ -75,7 +75,6 @@ data LayoutContext
 data AlexUserState = AlexUserState
   { layoutStack     :: [LayoutContext]
   , currentFile     :: SrcFile
-  , currentPosition :: !PositionNoFile
   , alexStartCodes  :: [Int]
   } deriving (Eq, Generic, Show)
 
@@ -84,6 +83,5 @@ alexInitUserState :: AlexUserState
 alexInitUserState = AlexUserState
   { layoutStack     = []
   , currentFile     = Strict.Nothing
-  , currentPosition = emptyPosition
   , alexStartCodes  = []
   }

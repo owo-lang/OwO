@@ -49,16 +49,16 @@ import           GHC.Generics         (Generic)
 --
 --   Note the invariant which positions have to satisfy: 'positionInvariant'.
 data Position' a = Position
-  { srcFile :: !a     -- ^ File.
-  , posPos  :: !Int32 -- ^ Position, counting from 1.
-  , posLine :: !Int32 -- ^ Line number, counting from 1.
-  , posCol  :: !Int32 -- ^ Column number, counting from 1.
+  { srcFile :: !a   -- ^ File.
+  , posPos  :: !Int -- ^ Position, counting from 1.
+  , posLine :: !Int -- ^ Line number, counting from 1.
+  , posCol  :: !Int -- ^ Column number, counting from 1.
   } deriving (Generic, Show)
 
 positionInvariant :: Position' a -> Bool
 positionInvariant p = posPos p > 0 && posLine p > 0 && posCol p > 0
 
-importantPart :: Position' a -> (a, Int32)
+importantPart :: Position' a -> (a, Int)
 importantPart p = (srcFile p, posPos p)
 
 emptyPositionInStr :: String -> Position
