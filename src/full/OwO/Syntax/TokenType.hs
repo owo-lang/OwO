@@ -1,6 +1,17 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module OwO.Syntax.TokenType where
+module OwO.Syntax.TokenType
+ ( LayoutContext(..)
+
+ -- Tokens
+ , TokenType(..)
+ , PsiToken(..)
+ , isStartingNewLayout
+
+ -- Alex
+ , AlexUserState(..)
+ , alexInitUserState
+ ) where
 
 import           Data.Text            as T
 

@@ -1,0 +1,13 @@
+module OwO.Simple where
+
+import Rua.Bla
+
+open import OwO.Equality
+
+data Bool : Type where
+  false : Bool
+  true  : Bool
+
+data Nat : Type where
+  zero : Nat
+  succ : Nat -> Nat
