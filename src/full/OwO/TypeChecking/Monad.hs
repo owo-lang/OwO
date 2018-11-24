@@ -61,7 +61,7 @@ addDefinition (QName currentModule name) =
 -- | TypeChecking State. I haven't decide on whether to store warnings here
 --   (but errors should definitely be in the other side of the Monad)
 data TCState = TypeCheckingState
-  { stateOptions :: CmdOptions
+  { stateOptions :: CompilerOptions
   -- ^ This is passed all around
   } deriving (Generic, Show)
 

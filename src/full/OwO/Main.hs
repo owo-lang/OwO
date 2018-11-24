@@ -3,15 +3,6 @@ module OwO.Main
   ) where
 
 import           OwO.Options
-import           OwO.Version    (versionWithCommitInfo)
 
-import           OwO.Util.Applicative
-
-runOwO :: CmdOptions -> IO ()
-runOwO opts = do
-  ifM (optShowVersion opts) printVersion
-  return ()
-
-printVersion :: IO ()
-printVersion = putStrLn $
-  "OwO " ++ versionWithCommitInfo
+runOwO :: CompilerOptions -> IO ()
+runOwO opts = return ()
