@@ -16,11 +16,14 @@ import           OwO.Util.Applicative
 $digit       = [0-9]
 $white_no_nl = $white # \n
 $escape      = [ r n b t a \\ \" \' ]
+$operator_c  = [ \+ \- \/ \\ \< \> \~ @ \# \$ \% \* \^ \? ]
+$operator_s  = [ \[ \] \| \= \: \. ]
 
 @integer     = $digit+
 @identifier  = [A-Za-z][0-9A-Za-z'_]*
 @string      = \"([^ \\ \"]|\\$escape)*\"
 @character   = \'([^ \\ \']|\\$escape)\'
+@operator    = $operator_c ($operator_c | $operator_s)*
 
 tokens :-
 
@@ -41,6 +44,7 @@ $white_no_nl  ;
   import      { simple ImportToken }
   where       { simple WhereToken }
   postulate   { simple PostulateToken }
+  instance    { simple InstanceToken }
   infixl      { simple InfixLToken }
   infixr      { simple InfixRToken }
   infix       { simple InfixToken }
@@ -52,6 +56,10 @@ $white_no_nl  ;
   \-\>        { simple RightArrowToken }
   \:          { simple ColonToken }
   \;          { simple SemicolonToken }
+  \(\|        { simple IdiomBracketLToken }
+  \|\)        { simple IdiomBracketRToken }
+  \{\|        { simple InstanceArgumentLToken }
+  \|\}        { simple InstanceArgumentRToken }
   \[\|        { simple InaccessiblePatternLToken }
   \|\]        { simple InaccessiblePatternRToken }
   \(          { simple ParenthesisLToken }
@@ -62,6 +70,7 @@ $white_no_nl  ;
   \]          { simple BracketRToken }
   \=          { simple EqualToken }
   \.          { simple DotToken }
+  @operator   { simpleString (OperatorToken . T.pack) }
 }
 
 <bol> {

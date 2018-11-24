@@ -1,0 +1,11 @@
+1+1=2
+infixl 2 +
+instance
+  ListMonoid : Monoid List
+  mempty ListMonoid = []
+  (<>)   ListMonoid a b = a ++ b
+concatM : {| Monoid m |} -> [m a] -> m a
+concatM []       = mempty
+concatM (a : as) = a <> concatM as
+a<|>b<~>5
+c>>=d.d

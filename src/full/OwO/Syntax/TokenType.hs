@@ -21,11 +21,7 @@ import qualified OwO.Util.StrictMaybe as Strict
 import           GHC.Generics         (Generic)
 
 data TokenType
-  = InaccessiblePatternLToken
-  -- ^ Dot pattern left
-  | InaccessiblePatternRToken
-  -- ^ Dot pattern right
-  | ModuleToken
+  = ModuleToken
   -- ^ module
   | OpenToken
   -- ^ open
@@ -42,6 +38,8 @@ data TokenType
 
   | WhereToken
   -- ^ where, starting a new layout
+  | InstanceToken
+  -- ^ instance, starting a new layout
   | PostulateToken
   -- ^ postulate, starting a new layout
 
@@ -53,6 +51,18 @@ data TokenType
   -- ^ (
   | ParenthesisRToken
   -- ^ )
+  | IdiomBracketLToken
+  -- ^ (|, idiom bracket
+  | IdiomBracketRToken
+  -- ^ |), idiom bracket
+  | InstanceArgumentLToken
+  -- ^ {|, instance argument
+  | InstanceArgumentRToken
+  -- ^ |}, instance argument
+  | InaccessiblePatternLToken
+  -- ^ [|, dot pattern
+  | InaccessiblePatternRToken
+  -- ^ |], dot pattern
   | ColonToken
   -- ^ :
   | LeftArrowToken
@@ -60,7 +70,7 @@ data TokenType
   | RightArrowToken
   -- ^ ->
   | BraceLToken
-  -- ^ {, implicit/instance arguments, starts a layout
+  -- ^ {, implicit arguments, starts a layout
   | BraceRToken
   -- ^ }, finishes a layout
   | SemicolonToken
@@ -68,10 +78,12 @@ data TokenType
   | EqualToken
   -- ^ =
   | DotToken
-  -- ^ .
+  -- ^ ., proof irrelevance, operators
 
   | IdentifierToken T.Text
   -- ^ identifier
+  | OperatorToken T.Text
+  -- ^ binary operators
   | StringToken T.Text
   -- ^ string literal
   | CharToken Char
@@ -86,6 +98,7 @@ data TokenType
 isStartingNewLayout :: TokenType -> Bool
 isStartingNewLayout WhereToken     = True
 isStartingNewLayout PostulateToken = True
+isStartingNewLayout InstanceToken  = True
 isStartingNewLayout _              = False
 
 data PsiToken = PsiToken
