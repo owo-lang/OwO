@@ -1,0 +1,17 @@
+module OwO.SimpleLayout where
+
+topModule = 233
+
+module SubmoduleA where
+  subModuleA = 233
+
+module SubmoduleB where
+  subModuleB = 233
+
+module SubmoduleC where
+  subModuleC = 233
+
+  module SubmoduleD where
+    subModuleD = 233
+
+topModuleAgain = 666
