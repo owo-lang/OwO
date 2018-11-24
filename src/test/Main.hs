@@ -2,10 +2,12 @@ module Main where
 
 -- import Test.Hspec
 
-import           OwO.Syntax.Parser
-import           Prelude           hiding (lex)
+import           Text.Pretty.Simple (pPrint)
 
-lexAndPrint = print . lex
+import           OwO.Syntax.Parser
+import           Prelude            hiding (lex)
+
+lexAndPrint = pPrint . lex
 
 main :: IO ()
 main = do
