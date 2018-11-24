@@ -15,9 +15,12 @@ import           OwO.Util.Applicative
 
 $digit       = [0-9]
 $white_no_nl = $white # \n
+$escape      = [ r n b t a \\ \" \' ]
 
 @integer     = $digit+
 @identifier  = [A-Za-z][0-9A-Za-z'_]*
+@string      = \"([^ \\ \"]|\\$escape)*\"
+@character   = \'([^ \\ \']|\\$escape)\'
 
 tokens :-
 
@@ -43,6 +46,8 @@ $white_no_nl  ;
   infix       { simple InfixToken }
   @integer    { simpleString (IntegerToken . read) }
   @identifier { simpleString (IdentifierToken . T.pack) }
+  @string     { simpleString (StringToken . T.pack . read) }
+  @character  { simpleString (CharToken . read) }
   \<\-        { simple LeftArrowToken }
   \-\>        { simple RightArrowToken }
   \:          { simple ColonToken }

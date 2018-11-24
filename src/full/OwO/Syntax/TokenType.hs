@@ -72,6 +72,10 @@ data TokenType
 
   | IdentifierToken T.Text
   -- ^ identifier
+  | StringToken T.Text
+  -- ^ string literal
+  | CharToken Char
+  -- ^ character literal
   | IntegerToken Integer
   -- ^ integer numbers
 
