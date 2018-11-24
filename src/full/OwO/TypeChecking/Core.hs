@@ -44,7 +44,7 @@ data ULevel
   = ULevelLit Int
   -- ^ Like Type0, Type1
   | ULevelVar String Int
-  -- ^ Level varaibles. Should be already computed.
+  -- ^ Level variables. Should be already computed.
   | ULevelMax
   -- ^ TypeInf, TypeOmega
   deriving (Eq, Generic, Ord, Show)

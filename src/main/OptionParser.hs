@@ -25,10 +25,12 @@ options = customExecParser pref information
   where
     information = info (helper <*> opts)
       $  fullDesc
-      <> header "Command line tool for the OwO Pwogwamming Langwage."
+      <> header "The Compiler for the OwO Programming Language."
+      <> footer "Website: https://www.owo-lang.org/"
     pref = prefs $  showHelpOnError
                  <> showHelpOnEmpty
                  <> disambiguate
+                 <> columns 80
     opts = CmdOptions
       <$> optional
         (strOption $  long "src"
@@ -52,12 +54,12 @@ options = customExecParser pref information
           )
       <*> switch
           (  long "version"
-          <> help "Show OwO compiler wersion"
+          <> help "Show OwO compiler version"
           <> short 'V'
           )
       <*> switch
           (  long "help"
-          <> help "Pwint this message"
+          <> help "Print this message"
           <> short 'h'
           )
       <*> switch

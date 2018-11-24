@@ -8,15 +8,15 @@
  [Circle]: https://circleci.com/gh/owo-lang/OwO.svg?style=svg
  [CircleIMG]: https://circleci.com/gh/owo-lang/OwO
 
-The compiler of the OwO pwogwamming langwage. WIP.
+The compiler of the OwO programming language. WIP.
 
-Thisu pwogwamming langwage is inspired by Agda, Idwisu, Haskellu and many
-other nisu pwogwamming langwagezu.
+This programming language is inspired by Agda, Idris, Haskell and many
+other nice programming language.
 
-+ Dewelopmento guido: [HACKING](./misc/HACKING.md)
-+ Webusaito (WIP) [repo](https://github.com/owo-lang/owo-lang.github.io)
++ Development guido: [HACKING](./misc/HACKING.md)
++ Website (WIP) [repo](https://github.com/owo-lang/owo-lang.github.io)
 
-## How to pwonounsu OwO
+## How to pronouns OwO
 
 /'əʊwəʊ/
 
