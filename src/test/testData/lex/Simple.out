@@ -1,0 +1,50 @@
+ModuleToken
+IdentifierToken "OwO"
+DotToken
+IdentifierToken "Simple"
+WhereToken
+BraceLToken
+ImportToken
+IdentifierToken "Rua"
+DotToken
+IdentifierToken "Bla"
+SemicolonToken
+OpenToken
+ImportToken
+IdentifierToken "OwO"
+DotToken
+IdentifierToken "Equality"
+SemicolonToken
+DataToken
+IdentifierToken "Bool"
+ColonToken
+IdentifierToken "Type"
+WhereToken
+BraceLToken
+IdentifierToken "false"
+ColonToken
+IdentifierToken "Bool"
+SemicolonToken
+IdentifierToken "true"
+ColonToken
+IdentifierToken "Bool"
+BraceRToken
+SemicolonToken
+DataToken
+IdentifierToken "Nat"
+ColonToken
+IdentifierToken "Type"
+WhereToken
+BraceLToken
+IdentifierToken "zero"
+ColonToken
+IdentifierToken "Nat"
+SemicolonToken
+IdentifierToken "succ"
+ColonToken
+IdentifierToken "Nat"
+RightArrowToken
+IdentifierToken "Nat"
+BraceRToken
+SemicolonToken
+BraceRToken

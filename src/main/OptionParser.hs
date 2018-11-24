@@ -41,11 +41,11 @@ options = customExecParser pref information
                    )
       <*> switch
           (  long "dump-tokens"
-          <> help "Only lex the file and print the tokens"
+          <> help "Lex the file and print the tokens"
           )
       <*> switch
           (  long "dump-ast"
-          <> help "Only parse the file and print the abstract syntax tree"
+          <> help "Parse the file and print the abstract syntax tree"
           )
       <*> switch
           (  long "version"
