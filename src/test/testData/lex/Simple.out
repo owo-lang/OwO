@@ -1,50 +1,50 @@
-ModuleToken
-IdentifierToken "OwO"
-DotToken
-IdentifierToken "Simple"
-WhereToken
-BraceLToken
-ImportToken
-IdentifierToken "Rua"
-DotToken
-IdentifierToken "Bla"
-SemicolonToken
-OpenToken
-ImportToken
-IdentifierToken "OwO"
-DotToken
-IdentifierToken "Equality"
-SemicolonToken
-DataToken
-IdentifierToken "Bool"
-ColonToken
-IdentifierToken "Type"
-WhereToken
-BraceLToken
-IdentifierToken "false"
-ColonToken
-IdentifierToken "Bool"
-SemicolonToken
-IdentifierToken "true"
-ColonToken
-IdentifierToken "Bool"
-BraceRToken
-SemicolonToken
-DataToken
-IdentifierToken "Nat"
-ColonToken
-IdentifierToken "Type"
-WhereToken
-BraceLToken
-IdentifierToken "zero"
-ColonToken
-IdentifierToken "Nat"
-SemicolonToken
-IdentifierToken "succ"
-ColonToken
-IdentifierToken "Nat"
-RightArrowToken
-IdentifierToken "Nat"
-BraceRToken
-SemicolonToken
-BraceRToken
+ModuleToken (0 1 1) (6 1 7)
+IdentifierToken "OwO" (7 1 8) (10 1 11)
+DotToken (10 1 11) (11 1 12)
+IdentifierToken "Simple" (11 1 12) (17 1 18)
+WhereToken (18 1 19) (23 1 24)
+BraceLToken (25 3 1) (25 3 1)
+ImportToken (25 3 1) (31 3 7)
+IdentifierToken "Rua" (32 3 8) (35 3 11)
+DotToken (35 3 11) (36 3 12)
+IdentifierToken "Bla" (36 3 12) (39 3 15)
+SemicolonToken (41 5 1) (41 5 1)
+OpenToken (41 5 1) (45 5 5)
+ImportToken (46 5 6) (52 5 12)
+IdentifierToken "OwO" (53 5 13) (56 5 16)
+DotToken (56 5 16) (57 5 17)
+IdentifierToken "Equality" (57 5 17) (65 5 25)
+SemicolonToken (67 7 1) (67 7 1)
+DataToken (67 7 1) (71 7 5)
+IdentifierToken "Bool" (72 7 6) (76 7 10)
+ColonToken (77 7 11) (78 7 12)
+IdentifierToken "Type" (79 7 13) (83 7 17)
+WhereToken (84 7 18) (89 7 23)
+BraceLToken (92 8 3) (92 8 3)
+IdentifierToken "false" (92 8 3) (97 8 8)
+ColonToken (98 8 9) (99 8 10)
+IdentifierToken "Bool" (100 8 11) (104 8 15)
+SemicolonToken (107 9 3) (107 9 3)
+IdentifierToken "true" (107 9 3) (111 9 7)
+ColonToken (113 9 9) (114 9 10)
+IdentifierToken "Bool" (115 9 11) (119 9 15)
+BraceRToken (121 11 1) (121 11 1)
+SemicolonToken (121 11 1) (121 11 1)
+DataToken (121 11 1) (125 11 5)
+IdentifierToken "Nat" (126 11 6) (129 11 9)
+ColonToken (130 11 10) (131 11 11)
+IdentifierToken "Type" (132 11 12) (136 11 16)
+WhereToken (137 11 17) (142 11 22)
+BraceLToken (145 12 3) (145 12 3)
+IdentifierToken "zero" (145 12 3) (149 12 7)
+ColonToken (150 12 8) (151 12 9)
+IdentifierToken "Nat" (152 12 10) (155 12 13)
+SemicolonToken (158 13 3) (158 13 3)
+IdentifierToken "succ" (158 13 3) (162 13 7)
+ColonToken (163 13 8) (164 13 9)
+IdentifierToken "Nat" (165 13 10) (168 13 13)
+RightArrowToken (169 13 14) (171 13 16)
+IdentifierToken "Nat" (172 13 17) (175 13 20)
+BraceRToken (176 14 1) (176 14 1)
+SemicolonToken (176 14 1) (176 14 1)
+BraceRToken (176 14 1) (176 14 1)

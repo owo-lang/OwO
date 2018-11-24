@@ -1,6 +1,7 @@
 module Main (main) where
 
 import           Control.Applicative
+import           System.IO            (hPutStrLn, stderr)
 
 import           OwO.Main             (runOwO)
 import           OwO.Options
@@ -23,7 +24,7 @@ main = do
   case compilerInputFile opts of
     Nothing ->
       if showVersion opts || showHelp opts then pure ()
-      else putStrLn "Please specify an input file!"
+      else hPutStrLn stderr "Please specify an input file!"
     Just f  -> runOwO $ CompilerOptions
         { optInputFile     = f
         , optIncludePaths  = compilerIncludePaths opts

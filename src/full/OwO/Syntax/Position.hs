@@ -53,7 +53,7 @@ import           GHC.Generics         (Generic)
 --   Note the invariant which positions have to satisfy: 'positionInvariant'.
 data Position' a = Position
   { srcFile :: !a   -- ^ File.
-  , posPos  :: !Int -- ^ Position, counting from 1.
+  , posPos  :: !Int -- ^ Absolute position, counting from 0.
   , posLine :: !Int -- ^ Line number, counting from 1.
   , posCol  :: !Int -- ^ Column number, counting from 1.
   } deriving (Generic, Show)

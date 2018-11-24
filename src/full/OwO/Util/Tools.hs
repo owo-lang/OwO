@@ -13,8 +13,13 @@ import           System.Exit          (exitFailure)
 import           System.IO
 
 prettyToken :: PsiToken -> String
--- TODO add line, col information
-prettyToken token = show (tokenType token)
+prettyToken token = show (tokenType token) ++ " " ++
+    printLoc (iStart loc) ++ " " ++ printLoc (iEnd loc)
+  where
+    loc = location token
+    printLoc loc = "(" ++ show (posPos  loc) ++
+                   " " ++ show (posLine loc) ++
+                   " " ++ show (posCol  loc) ++ ")"
 
 dumpTokens :: FilePath -> IO ()
 dumpTokens file = lex <$> readFile file >>= \case

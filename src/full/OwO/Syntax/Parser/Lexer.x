@@ -71,15 +71,9 @@ beginCode n _ _ = pushLexState n >> alexMonadScan
 
 simple :: TokenType -> AlexAction PsiToken
 simple token ((AlexPn pos line col), _, _, _) size = do
-  file <- currentFile <$> alexGetUserState
-  let start = simplePosition (pos - size) line (col - size)
-  let end   = simplePosition pos line col
   -- run `pushLexState` when it's `where` or `postulate`
   isStartingNewLayout token `ifM` pushLexState layout
-  pure $ PsiToken
-    { tokenType = token
-    , location  = locationFromSegment start end file
-    }
+  toMonadPsi pos line col size token
 
 explicitBraceLeft :: AlexAction PsiToken
 explicitBraceLeft ((AlexPn pos line col), _, _, _) size = do
@@ -94,8 +88,8 @@ simpleString f ((AlexPn pos line col), _, _, s) size =
 toMonadPsi :: Int -> Int -> Int -> Int -> TokenType -> Alex PsiToken
 toMonadPsi pos line col size token = do
   file <- currentFile <$> alexGetUserState
-  let start = simplePosition (pos - size) line (col - size)
-  let end   = simplePosition pos line col
+  let start = simplePosition pos line col
+  let end   = simplePosition (pos + size) line (col + size)
   pure $ PsiToken
     { tokenType = token
     , location  = locationFromSegment start end file
