@@ -8,13 +8,16 @@ import           Options.Applicative
 import           OwO.Options
 
 data CmdOptions = CmdOptions
-  { compilerInputFile    :: Maybe FilePath
-  , compilerIncludePaths :: [FilePath]
-  , compilerDumpTokens   :: Bool
-  , compilerDumpAst      :: Bool
-  , showVersion          :: Bool
-  , showHelp             :: Bool
-  , pragmaSafe           :: Bool
+  { compilerInputFile           :: Maybe FilePath
+  , compilerIncludePaths        :: [FilePath]
+  , compilerDumpTokens          :: Bool
+  , compilerDumpAst             :: Bool
+  , showVersion                 :: Bool
+  , showHelp                    :: Bool
+  , pragmaSafe                  :: Bool
+  , pragmaNoPositivityCheck     :: Bool
+  , pragmaNoTerminationCheck    :: Bool
+  , pragmaNoExhaustivenessCheck :: Bool
   }
 
 options :: IO CmdOptions
@@ -60,4 +63,16 @@ options = customExecParser pref information
       <*> switch
           (  long "safe"
           <> help "Enable safe mode"
+          )
+      <*> switch
+          (  long "no-positivity-check"
+          <> help "Disable positivity checks"
+          )
+      <*> switch
+          (  long "no-termination-check"
+          <> help "Disable termination checks"
+          )
+      <*> switch
+          (  long "no-exhaustiveness-check"
+          <> help "Disable exhaustiveness check"
           )

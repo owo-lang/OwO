@@ -4,11 +4,7 @@ import           Control.Applicative
 import           System.IO            (hPutStrLn, stderr)
 
 import           OwO.Main             (runOwO)
-import           OwO.Options
-    ( CompilerOptions (..)
-    , PragmaOptions (..)
-    , defaultPragmaOptions
-    )
+import           OwO.Options          (CompilerOptions (..), PragmaOptions (..))
 import           OwO.Util.Applicative
 import           OwO.Util.Tools
 import           OwO.Version          (versionWithCommitInfo)
@@ -34,5 +30,9 @@ main = do
       unlessM (toDumpTok || toDumpAst) . runOwO $ CompilerOptions
         { optInputFile     = file
         , optIncludePaths  = compilerIncludePaths opts
-        , optPragmaOptions = defaultPragmaOptions
+        , optPragmaOptions = PragmaOptions
+          { optNoPositivityCheck     = pragmaNoPositivityCheck opts
+          , optNoTerminationCheck    = pragmaNoTerminationCheck opts
+          , optNoExhaustivenessCheck = pragmaNoExhaustivenessCheck opts
+          }
         }

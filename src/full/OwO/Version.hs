@@ -36,5 +36,5 @@ commitInfo
           | otherwise          = ""
 
     -- | Abbreviate a commit hash while keeping it unambiguous
-    abbrev = take 7
+    abbrev = take 11
 

@@ -10,6 +10,7 @@ build-type: Simple
 -- copyright:
 
 extra-source-files: misc/CHANGELOG.md
+                    misc/licenses/LICENSE-Agda
                     README.md
                     src/full/impossible.h
 license-file:       LICENSE

@@ -3,7 +3,6 @@
 module OwO.Options
   ( CompilerOptions(..)
   , PragmaOptions(..)
-  , defaultPragmaOptions
   ) where
 
 import           Data.Function
@@ -18,10 +17,7 @@ data CompilerOptions = CompilerOptions
   } deriving (Generic, Show)
 
 data PragmaOptions = PragmaOptions
-  { optSafe :: Bool
+  { optNoPositivityCheck     :: Bool
+  , optNoTerminationCheck    :: Bool
+  , optNoExhaustivenessCheck :: Bool
   } deriving (Eq, Generic, Show)
-
-defaultPragmaOptions :: PragmaOptions
-defaultPragmaOptions = PragmaOptions
-  { optSafe = True
-  }
