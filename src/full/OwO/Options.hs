@@ -15,8 +15,6 @@ data CompilerOptions = CompilerOptions
   { optInputFile     :: FilePath
   , optIncludePaths  :: [FilePath]
   , optPragmaOptions :: PragmaOptions
-  , optDumpTokens    :: Bool
-  , optDumpAst       :: Bool
   } deriving (Generic, Show)
 
 data PragmaOptions = PragmaOptions

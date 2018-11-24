@@ -10,6 +10,7 @@ import           OwO.Options
     , defaultPragmaOptions
     )
 import           OwO.Util.Applicative
+import           OwO.Util.Tools
 import           OwO.Version          (versionWithCommitInfo)
 
 import           OptionParser
@@ -22,13 +23,16 @@ main = do
   opts <- options
   showVersion opts `ifM` printVersion
   case compilerInputFile opts of
-    Nothing ->
+    Nothing   ->
       if showVersion opts || showHelp opts then pure ()
       else hPutStrLn stderr "Please specify an input file!"
-    Just f  -> runOwO $ CompilerOptions
-        { optInputFile     = f
+    Just file -> do
+      let toDumpTok = compilerDumpTokens opts
+      let toDumpAst = compilerDumpAst opts
+      ifM toDumpTok $ dumpTokens file
+      ifM toDumpAst $ dumpAst file
+      unlessM (toDumpTok || toDumpAst) . runOwO $ CompilerOptions
+        { optInputFile     = file
         , optIncludePaths  = compilerIncludePaths opts
-        , optDumpTokens    = compilerDumpTokens opts
-        , optDumpAst       = compilerDumpAst opts
         , optPragmaOptions = defaultPragmaOptions
         }

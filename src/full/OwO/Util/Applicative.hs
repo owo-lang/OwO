@@ -5,3 +5,6 @@ import           Control.Applicative
 ifM :: Applicative m => Bool -> m () -> m ()
 ifM True  m = m
 ifM False _ = pure ()
+
+unlessM :: Applicative m => Bool -> m () -> m ()
+unlessM = ifM . not
