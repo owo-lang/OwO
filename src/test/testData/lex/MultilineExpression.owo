@@ -1,0 +1,7 @@
+a = b
+  + c
+e = k + d
+f = do
+  a +
+    b
+  c
