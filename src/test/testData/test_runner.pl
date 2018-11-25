@@ -9,15 +9,18 @@ say "$version: @{[ `$version` ]}";
 my @failure = ();
 
 foreach my $fixture (map {substr $_, 0, -1} split(/[ \t\n]+/, `ls -G -d */`)) {
-    say colored("Fixture $fixture:", 'cyan');
-    say `touch $fixture.flags`;
+    say "Fixture $fixture:";
+    `touch $fixture.flags`;
     my $flags = `cat $fixture.flags`;
-    foreach $_ (split(/[ \t\n]+/, `ls -G $fixture/*.owo`)) {
-        say colored("  Case $_:", 'yellow');
-        my $diff = `owo $flags -c $_ | diff - @{[ s/\.owo/\.out/rg ]}`;
+    foreach my $case (split(/[ \t\n]+/, `ls -G $fixture/*.owo`)) {
+        say "  Case $case:";
+        my $out = $case =~ s/\.owo/\.out/rg;
+        my $diff = `owo $flags -c $case | diff - $out`;
         if (length $diff) {
-            push @failure, $_;
-            say colored(join("\n", map {"    $_"} split(/\n/, $diff)), 'red');
+            push @failure, $case;
+            map {say(colored("    $_", 'red'))} split(/\n/, $diff);
+            say colored("    To replace the golden value, run:", 'cyan');
+            say colored("    \$ owo $flags -c $case > $out", 'cyan');
         } else {
             say colored('    Passed!', 'green');
         }

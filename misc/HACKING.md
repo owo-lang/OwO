@@ -43,12 +43,12 @@ $ hlint src
 
 You need perl5 \> v5.10 to run tests.
 
-### Parsing tests
+Why perl? Because it's nearly everywhere -- most Linux distributions,
+Windows git-bash (yes, the perl bundled in git-bash is sufficient), macOS, etc.
 
-```shell
-$ cd src/test/testData
-$ ./test_runner.pl
-```
+### Golden-valued tests
+
+See [this instruction](../src/test/testData/README.md).
 
 ## Coding convention
 
