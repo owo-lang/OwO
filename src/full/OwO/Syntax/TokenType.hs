@@ -31,6 +31,10 @@ data TokenType
   -- ^ data
   | CodataToken
   -- ^ codata
+  | CaseToken
+  -- ^ case (with abstraction)
+  | CocaseToken
+  -- ^ cocase (record constructor, coinductive)
 
   | InfixToken
   | InfixLToken
@@ -42,6 +46,10 @@ data TokenType
   -- ^ instance, starting a new layout
   | PostulateToken
   -- ^ postulate, starting a new layout
+  | OfToken
+  -- ^ of (case), starting a new layout
+  | DoToken
+  -- ^ do, starting a new layout
 
   | BracketLToken
   -- ^ ], for `List` literal
@@ -51,6 +59,8 @@ data TokenType
   -- ^ (
   | ParenthesisRToken
   -- ^ )
+  | SeparatorToken
+  -- ^ |, with abstraction
   | IdiomBracketLToken
   -- ^ (|, idiom bracket
   | IdiomBracketRToken
@@ -99,6 +109,9 @@ isStartingNewLayout :: TokenType -> Bool
 isStartingNewLayout WhereToken     = True
 isStartingNewLayout PostulateToken = True
 isStartingNewLayout InstanceToken  = True
+isStartingNewLayout DoToken        = True
+isStartingNewLayout OfToken        = True
+isStartingNewLayout CocaseToken    = True
 isStartingNewLayout _              = False
 
 data PsiToken = PsiToken

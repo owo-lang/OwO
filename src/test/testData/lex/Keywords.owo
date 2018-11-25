@@ -1,0 +1,21 @@
+module A where
+
+open import KKSK
+
+a = do
+  b <- c <|> do
+    ala
+    xa
+  d
+  e
+
+a : B -> C
+a (D k) case f k of
+  | (E q) case g q of
+    | (F b) = bla
+  | (L a)   = ora
+(D k) (P q) = rua
+
+x = cocase
+  .(<>) = (++)
+  .mempty = []

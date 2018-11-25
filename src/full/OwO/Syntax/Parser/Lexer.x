@@ -25,6 +25,7 @@ $operator_s  = [ \[ \] \| \= \: \. ]
 @string      = \"([^ \\ \"]|\\$escape)*\"
 @character   = \'([^ \\ \']|\\$escape)\'
 @operator    = $operator_c ($operator_c | $operator_s)*
+@colon_op    = \: ($operator_c | $operator_s)*
 
 tokens :-
 
@@ -40,8 +41,12 @@ $white_no_nl  ;
   \n          { beginCode bol }
   module      { simple ModuleToken }
   open        { simple OpenToken }
+  do          { simple DoToken }
+  of          { simple OfToken }
   data        { simple DataToken }
   codata      { simple CodataToken }
+  case        { simple CaseToken }
+  cocase      { simple CocaseToken }
   import      { simple ImportToken }
   where       { simple WhereToken }
   postulate   { simple PostulateToken }
@@ -55,6 +60,7 @@ $white_no_nl  ;
   @character  { simpleString (CharToken . read) }
   \<\-        { simple LeftArrowToken }
   \-\>        { simple RightArrowToken }
+  @colon_op   { simpleString (OperatorToken . T.pack) }
   \:          { simple ColonToken }
   \;          { simple SemicolonToken }
   \(\|        { simple IdiomBracketLToken }
@@ -63,6 +69,7 @@ $white_no_nl  ;
   \|\}        { simple InstanceArgumentRToken }
   \[\|        { simple InaccessiblePatternLToken }
   \|\]        { simple InaccessiblePatternRToken }
+  \|          { simple SeparatorToken }
   \(          { simple ParenthesisLToken }
   \)          { simple ParenthesisRToken }
   \{          { simple BraceLToken }
