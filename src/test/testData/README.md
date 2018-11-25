@@ -10,3 +10,9 @@ running test is to get the actual output and do a comparison.
 ```shell
 $ perl test_runner.pl
 ```
+
+To run tests but do not ask for replacing golden values, run
+
+```shell
+$ perl test_runner.pl --no-terminal
+```
