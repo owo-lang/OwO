@@ -16,6 +16,7 @@ foreach my $fixture (map {substr $_, 0, -1} split(/[ \t\n]+/, `ls -G -d */`)) {
     foreach my $case (split(/[ \t\n]+/, `ls -G $fixture/*.owo`)) {
         say " Case $case:";
         my $out = $case =~ s/\.owo/\.out/rg;
+        `touch $out`;
         my $diff = `owo $flags -c $case | diff - $out`;
         if (length $diff) {
             push @failure, $case;

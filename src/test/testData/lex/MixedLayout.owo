@@ -1,0 +1,12 @@
+module A where
+ a = do { b
+     ; c ; e }
+ b = c
+ module C where {
+     a
+ ; b = do
+   a <- do { c; d }
+   return rua
+ ; c
+ }
+
