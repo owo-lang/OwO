@@ -7,6 +7,7 @@ use v5.10;
 my $version = 'owo --version';
 say "$version: @{[ `$version` ]}";
 my @failure = ();
+my $success = 0;
 my $noTerm = scalar @ARGV && $ARGV[0] eq '--no-terminal';
 
 foreach my $fixture (map {substr $_, 0, -1} split(/[ \t\n]+/, `ls -G -d */`)) {
@@ -26,15 +27,17 @@ foreach my $fixture (map {substr $_, 0, -1} split(/[ \t\n]+/, `ls -G -d */`)) {
                 : say colored('  Leave it alone.', 'yellow');
         } else {
             say colored('  Passed!', 'green');
+            $success++;
         }
     }
 }
 
-say '';
-if (scalar @failure) {
+my $failed = scalar @failure;
+say 'Result: ', $failed ? colored('FAILED.', 'red') : colored('ok.', 'green'),
+    colored(" $success passed,", 'green'),
+    colored(" $failed failed.", $failed ? 'red' : 'white');
+if ($failed) {
     my $pretty = join("\n ", @failure);
     say colored("Failing tests:\n $pretty", 'red');
     die;
-} else {
-    say colored('All tests passed!', 'green');
 }
