@@ -25,7 +25,7 @@ $operator_s  = [ \[ \] \| \= \: \. ]
 @string      = \"([^ \\ \"]|\\$escape)*\"
 @character   = \'([^ \\ \']|\\$escape)\'
 @operator    = $operator_c ($operator_c | $operator_s)*
-@colon_op    = \: ($operator_c | $operator_s)*
+@colon_op    = \: ($operator_c | $operator_s)+
 
 tokens :-
 

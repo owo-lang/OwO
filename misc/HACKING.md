@@ -39,6 +39,17 @@ You can run `hlint` with this command:
 $ hlint src
 ```
 
+## Testing
+
+You need perl5 \> v5.10 to run tests.
+
+### Parsing tests
+
+```shell
+$ cd src/test/testData
+$ ./test_runner.pl
+```
+
 ## Coding convention
 
 * Functions/record projections should be camelCase

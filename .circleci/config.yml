@@ -12,9 +12,6 @@ jobs:
       - run:
           name: Resolve/Update Dependencies
           command: stack setup
-      # - run:
-          # name: Run tests
-          # command: stack test
       - run:
           name: Install alex
           command: stack install alex
@@ -37,3 +34,10 @@ jobs:
       - run:
           name: Run hlint, ignoring errors
           command: hlint src || true
+      - run:
+          name: Run tests
+          command: |
+            cd src/test/testData
+            perl --version
+            perl test_runner.pl
+            cd -
