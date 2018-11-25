@@ -65,7 +65,7 @@ data BinderInfo i
 data ConstInfo
   = IntConst Int
   | IntegerConst Integer
-  | StringConst String
+  | StringConst T.Text
   | CharConst Char
   deriving (Eq, Generic, Ord, Show)
 
@@ -94,5 +94,5 @@ type Type = Term
 
 data Definition
   = SimpleDefinition !Type !Term
-  -- ^ No type signature, just an expression with type specified
+  -- ^ No type signature, just an expression with (optional) type specified
   deriving (Eq, Generic, Ord, Show)

@@ -6,6 +6,7 @@ module OwO.Syntax.Parser.Lexer where
 import           OwO.Syntax.TokenType
 import           OwO.Syntax.Position
 
+import           Data.Maybe           (listToMaybe)
 import qualified Data.Text            as T
 import qualified OwO.Util.StrictMaybe as Strict
 import           OwO.Util.Applicative
@@ -84,20 +85,23 @@ beginCode :: Int -> AlexAction PsiToken
 beginCode n _ _ = pushLexState n >> alexMonadScan
 
 simple :: TokenType -> AlexAction PsiToken
-simple token ((AlexPn pos line col), _, _, _) size = do
+simple token (pn, _, _, _) size = do
   -- run `pushLexState` when it's `where` or `postulate`
   isStartingNewLayout token `ifM` pushLexState layout
-  toMonadPsi pos line col size token
+  toMonadPsi' pn size token
 
 explicitBraceLeft :: AlexAction PsiToken
-explicitBraceLeft ((AlexPn pos line col), _, _, _) size = do
+explicitBraceLeft (pn, _, _, _) size = do
   popLexState
   pushLayout NoLayout
-  toMonadPsi pos line col size BraceLToken
+  toMonadPsi' pn size BraceLToken
 
 simpleString :: (String -> TokenType) -> AlexAction PsiToken
-simpleString f ((AlexPn pos line col), _, _, s) size =
-   toMonadPsi pos line col size . f $ take size s
+simpleString f (pn, _, _, s) size =
+   toMonadPsi' pn size . f $ take size s
+
+toMonadPsi' :: AlexPosn -> Int -> TokenType -> Alex PsiToken
+toMonadPsi' (AlexPn pos line col) = toMonadPsi pos line col
 
 toMonadPsi :: Int -> Int -> Int -> Int -> TokenType -> Alex PsiToken
 toMonadPsi pos line col size token = do
@@ -116,25 +120,25 @@ alexEOF = getLayout >>= \case
     Just  NoLayout  -> popLayout >> alexMonadScan
   where
     java token = do
-       (AlexPn pos line col, _, _, _) <- alexGetInput
-       toMonadPsi pos line col 0 token
+       (pn, _, _, _) <- alexGetInput
+       toMonadPsi' pn 0 token
 
 doBol :: AlexAction PsiToken
-doBol ((AlexPn pos line col), _, _, _) size =
+doBol (pn@(AlexPn _ _ col), _, _, _) size =
   getLayout >>= \case
     Just (Layout n) -> case col `compare` n of
-      LT -> popLayout >> addToken BraceRToken
+      LT -> popLayout   >> addToken BraceRToken
       EQ -> popLexState >> addToken SemicolonToken
       GT -> popLexState >> alexMonadScan
     _ -> popLexState >> alexMonadScan
   where
-    addToken = toMonadPsi pos line col size
+    addToken = toMonadPsi' pn size
 
 newLayoutContext :: AlexAction PsiToken
-newLayoutContext ((AlexPn pos line col), _, _, _) size = do
+newLayoutContext (pn@(AlexPn _ _ col), _, _, _) size = do
   popLexState
   pushLayout $ Layout col
-  toMonadPsi pos line col size BraceLToken
+  toMonadPsi' pn size BraceLToken
 
 pushLayout :: LayoutContext -> Alex ()
 pushLayout lc = do
@@ -153,9 +157,7 @@ popLayout = do
 getLayout :: Alex (Maybe LayoutContext)
 getLayout = do
   AlexUserState { layoutStack = lcs } <- alexGetUserState
-  pure $ case lcs of
-    []     -> Nothing
-    lc : _ -> Just lc
+  pure $ listToMaybe lcs
 
 pushLexState :: Int -> Alex ()
 pushLexState nsc = do
