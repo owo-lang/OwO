@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP        #-}
 {-# LANGUAGE LambdaCase #-}
 module OwO.Util.Tools
   ( dumpTokens
@@ -11,6 +12,7 @@ import           OwO.Syntax.TokenType
 import           Prelude              hiding (lex)
 import           System.Exit          (exitFailure)
 import           System.IO
+#include <impossible.h>
 
 prettyToken :: PsiToken -> String
 prettyToken token = show (tokenType token) ++ " " ++
@@ -27,4 +29,4 @@ dumpTokens file = lex <$> readFile file >>= \case
   Right tokens -> mapM_ putStrLn $ prettyToken <$> tokens
 
 dumpAst :: FilePath -> IO ()
-dumpAst = error "unimplemented"
+dumpAst = __TODO__

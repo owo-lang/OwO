@@ -77,6 +77,7 @@ simpleName = C.textOfName . nameConcrete
 data PsiFile = PsiFile
   { fileType           :: PsiFileType
   , topLevelModuleName :: QModuleName
+  , declarations       :: [PsiDeclaration]
   } deriving (Eq, Generic, Ord, Show)
 
 data PsiFixityInfo

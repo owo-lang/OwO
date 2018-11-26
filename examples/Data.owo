@@ -33,7 +33,7 @@ zero     + n = n
 
 co0 : CoNat
 iszero co0 = true
-pred   co0 () -- an absurd pattern
+pred   () -- an absurd pattern
 
 co1 : CoNat
 iszero co1 = false

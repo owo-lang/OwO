@@ -21,6 +21,9 @@ data Impossible
     --   Used when we reach a program point which can in principle
     --   be reached, but not for a certain run.
 
+  | Unimplemented String Integer
+    -- ^ A TODO.
+
 instance Show Impossible where
   -- Sell moe
   show (Impossible file line) = unlines
@@ -30,6 +33,10 @@ instance Show Impossible where
   show (Unreachable file line) = unlines
     [ "We rweached a pwogwam point we did not want to rweach OwO."
     , "Location of the erwor: " ++ file ++ ":" ++ show line
+    ]
+  show (Unimplemented file line) = unlines
+    [ "We rweached a TODO, pwease wait until we impwment this OwO."
+    , "Location of the TODO: " ++ file ++ ":" ++ show line
     ]
 
 instance Exception Impossible
