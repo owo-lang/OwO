@@ -9,7 +9,7 @@ my $version = 'owo --version';
 say "$version: @{[ `$version` ]}";
 my @failure = ();
 my $success = 0;
-my $noTerm = scalar @ARGV && $ARGV[0] eq '--no-terminal';
+my $isForce = scalar @ARGV && $ARGV[0] eq '--force';
 
 sub ntr {return colored $_[0], 'green';}
 sub red {return colored $_[0], 'red';}
@@ -23,14 +23,13 @@ foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -G -d */`) {
         say " Case $case:";
         my $out = $case =~ s/\.owo/\.out/rg;
         `touch $out`;
-        my $diff = `owo $flags -c $case | diff - $out`;
+        my $diff = `owo $flags -c $case | diff --strip-trailing-cr - $out`;
         if (length $diff) {
             push @failure, $case;
             map {say red("  $_")} split /\n/, $diff;
-            # TODO: Avoid conflicting with `cabal test'.
-            # print colored("  Replace the golden value (y/N)? ", 'cyan');
-            # !$noTerm && getc eq 'y' ? `owo $flags -c $case > $out`
-            #     : say colored('  Leave it alone.', 'bold yellow');
+            print colored("  Replace the golden value (y/N)? ", 'cyan');
+            $isForce && getc eq 'y' ? `owo $flags -c $case > $out`
+                : say colored('  Leave it alone.', 'bold yellow');
         } else {
             say ntr('  Passed!');
             $success++;
