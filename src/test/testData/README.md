@@ -2,17 +2,23 @@
 
 This is a simple parsing/lexing test case set.
 
-We store input and expected output here,
-running test is to get the actual output and do a comparison.
+We store input and expected output here, running test is to get the actual
+output and do a comparison.
 
 ### Running tests
 
+A simple `cabal test` command can get the job done.  For a more verbose test
+information, pass the option `--show-details=streaming` to `cabal`.
+
 ```shell
-$ perl test_runner.pl
+$ cabal test --show-details=streaming
 ```
 
-To run tests but do not ask for replacing golden values, run
+The underlying test script can forcibly writes the actual output to the expected
+data, so if you want to be asked for it, run the script manually and switch the
+option `--force` on.
 
 ```shell
-$ perl test_runner.pl --no-terminal
+$ cd src/test/testData
+$ perl test_runner.pl --force
 ```
