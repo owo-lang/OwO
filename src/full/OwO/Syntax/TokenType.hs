@@ -102,9 +102,10 @@ data TokenType
   -- ^ integer numbers
   | CommentToken T.Text
   -- ^ comments. We reserve them to provide better tooling.
+  -- ^ this shouldn't present in AST, only in token sequence.
 
   | EndOfFileToken
-  -- ^ finishes a file
+  -- ^ finishes a file. This will not present in the output token sequence.
   deriving (Eq, Generic, Ord, Show)
 
 isStartingNewLayout :: TokenType -> Bool
@@ -123,13 +124,14 @@ data PsiToken = PsiToken
 
 data LayoutContext
   = NoLayout
-  | Layout Int
+  | Layout !Int
   deriving (Eq, Generic, Ord, Show)
 
 -- | See @OwO.Syntax.Position@
 data AlexUserState = AlexUserState
   { layoutStack    :: [LayoutContext]
   , currentFile    :: SrcFile
+  , blockComments  :: [Int]
   , alexStartCodes :: [Int]
   } deriving (Eq, Generic, Show)
 
@@ -138,5 +140,6 @@ alexInitUserState :: AlexUserState
 alexInitUserState = AlexUserState
   { layoutStack    = []
   , currentFile    = Strict.Nothing
+  , blockComments  = []
   , alexStartCodes = []
   }

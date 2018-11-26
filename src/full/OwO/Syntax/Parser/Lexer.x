@@ -1,5 +1,6 @@
 {
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE CPP        #-}
 
 module OwO.Syntax.Parser.Lexer where
 
@@ -10,6 +11,8 @@ import           Data.Maybe           (listToMaybe)
 import qualified Data.Text            as T
 import qualified OwO.Util.StrictMaybe as Strict
 import           OwO.Util.Applicative
+
+#include <impossible.h>
 }
 
 %wrapper "monadUserState"
@@ -31,15 +34,16 @@ $operator_s  = [ \[ \] \| \= \: \. ]
 tokens :-
 
 $white_no_nl  ;
-@comment_l    { simpleString (CommentToken . T.pack) }
 
 <layout> {
+  @comment_l  { simpleString (CommentToken . T.pack) }
   \n          ;
   \{          { explicitBraceLeft }
   ()          { newLayoutContext }
 }
 
 <0> {
+  @comment_l  { simpleString (CommentToken . T.pack) }
   \n          { beginCode bol }
   module      { simple ModuleToken }
   open        { simple OpenToken }
@@ -71,6 +75,7 @@ $white_no_nl  ;
   \|\}        { simple InstanceArgumentRToken }
   \[\|        { simple InaccessiblePatternLToken }
   \|\]        { simple InaccessiblePatternRToken }
+  \{\-        { startBlockComment }
   \|          { simple SeparatorToken }
   \(          { simple ParenthesisLToken }
   \)          { simple ParenthesisRToken }
@@ -83,7 +88,14 @@ $white_no_nl  ;
   @operator   { simpleString (OperatorToken . T.pack) }
 }
 
+<nestedComment> {
+  \{\-        { pushBlockComment }
+  \-\}        { popBlockComment }
+  ()          ;
+}
+
 <bol> {
+  @comment_l  { simpleString (CommentToken . T.pack) }
   \n          ;
   ()          { doBol }
 }
@@ -131,6 +143,33 @@ alexEOF = getLayout >>= \case
     java token = do
        (pn, _, _, _) <- alexGetInput
        toMonadPsi' pn 0 token
+
+startBlockComment :: AlexAction PsiToken
+startBlockComment ((AlexPn p _ _), _, _, _) _ = do
+  s <- alexGetUserState
+  alexSetUserState s { blockComments = [p] }
+  pushLexState nestedComment
+  alexMonadScan
+
+pushBlockComment :: AlexAction PsiToken
+pushBlockComment ((AlexPn p _ _), _, _, _) _ = do
+  s@AlexUserState { blockComments = ps } <- alexGetUserState
+  alexSetUserState s { blockComments = p : ps }
+  alexMonadScan
+
+popBlockComment :: AlexAction PsiToken
+popBlockComment (pn@(AlexPn pos _ _), _, _, str) _ = do
+  s <- alexGetUserState
+  case blockComments s of
+    [ ] -> __UNREACHABLE__
+    [p] -> do
+      let size = pos - p
+      popLexState
+      alexSetUserState s { blockComments = [] }
+      toMonadPsi' pn size $ CommentToken (T.pack $ take size str)
+    ps  -> do
+      alexSetUserState s { blockComments = tail ps }
+      alexMonadScan
 
 doBol :: AlexAction PsiToken
 doBol (pn@(AlexPn _ _ col), _, _, _) size =

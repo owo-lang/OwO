@@ -1,0 +1,23 @@
+{--
+ -  This is a multi-line comment.
+ -}
+
+{- {- Comments can be nested -} -}
+
+{-
+  {-
+    Nested comments can cross lines
+  -}
+-}
+
+{-
+  {-
+    Nested comments can cross lines
+  --} This is a line comment
+  -}
+-}
+
+-- This is a single-line comment.
+
+-- | An empty module.
+module Hello where
