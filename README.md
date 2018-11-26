@@ -2,11 +2,14 @@
 
 [![CircleCI][Circle]][CircleIMG]
 [![AppVeyor][AV]][AVIMG]
+[![Join the chat at https://gitter.im/owo-rfcs/Lobby][Gitter]][GitterIMG]
 
  [AV]: https://ci.appveyor.com/api/projects/status/tuhny5tndmtv23be/branch/master?svg=true
  [AVIMG]: https://ci.appveyor.com/project/ice1000/owo/branch/master
  [Circle]: https://circleci.com/gh/owo-lang/OwO.svg?style=svg
  [CircleIMG]: https://circleci.com/gh/owo-lang/OwO
+ [Gitter]: https://badges.gitter.im/owo-rfcs/Lobby.svg
+ [GitterIMG]: https://gitter.im/owo-rfcs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
 The compiler of the OwO programming language. WIP.
 

@@ -28,7 +28,7 @@ foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -d testData/*/
         if (length $diff) {
             push @failure, $case;
             map {say red("  $_")} split /\n/, $diff;
-            next '  CI detected, skip golden value update.' if $isCI;
+            next if $isCI;
             print colored('  Update the golden value (y/N)? ', 'cyan');
             getc eq 'y' ? `owo $flags -c $case > $out`
                 : say colored(<<'HINT', 'bold yellow');
