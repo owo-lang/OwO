@@ -131,7 +131,6 @@ data LayoutContext
 data AlexUserState = AlexUserState
   { layoutStack    :: [LayoutContext]
   , currentFile    :: SrcFile
-  , blockComments  :: [Int]
   , alexStartCodes :: [Int]
   } deriving (Eq, Generic, Show)
 
@@ -140,6 +139,5 @@ alexInitUserState :: AlexUserState
 alexInitUserState = AlexUserState
   { layoutStack    = []
   , currentFile    = Strict.Nothing
-  , blockComments  = []
   , alexStartCodes = []
   }

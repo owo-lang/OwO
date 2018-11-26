@@ -22,6 +22,7 @@ $white_no_nl = $white # \n
 $escape      = [ r n b t a \\ \" \' ]
 $operator_c  = [ \+ \- \/ \\ \< \> \~ @ \# \$ \% \* \^ \? ]
 $operator_s  = [ \[ \] \| \= \: \. ]
+$comment_c   = [^ \n \- \{ ]
 
 @integer     = $digit+
 @identifier  = [A-Za-z][0-9A-Za-z'_]*
@@ -30,20 +31,20 @@ $operator_s  = [ \[ \] \| \= \: \. ]
 @operator    = $operator_c ($operator_c | $operator_s)*
 @colon_op    = \: ($operator_c | $operator_s)+
 @comment_l   = \-\-[^ \n ]*
+@comment     = ($comment_c | $white)+
 
 tokens :-
 
 $white_no_nl  ;
+@comment_l    { simpleString (CommentToken . T.pack) }
 
 <layout> {
-  @comment_l  { simpleString (CommentToken . T.pack) }
   \n          ;
   \{          { explicitBraceLeft }
   ()          { newLayoutContext }
 }
 
 <0> {
-  @comment_l  { simpleString (CommentToken . T.pack) }
   \n          { beginCode bol }
   module      { simple ModuleToken }
   open        { simple OpenToken }
@@ -75,7 +76,7 @@ $white_no_nl  ;
   \|\}        { simple InstanceArgumentRToken }
   \[\|        { simple InaccessiblePatternLToken }
   \|\]        { simple InaccessiblePatternRToken }
-  \{\-        { startBlockComment }
+  \{\-        { pushBlockComment }
   \|          { simple SeparatorToken }
   \(          { simple ParenthesisLToken }
   \)          { simple ParenthesisRToken }
@@ -91,11 +92,13 @@ $white_no_nl  ;
 <nestedComment> {
   \{\-        { pushBlockComment }
   \-\}        { popBlockComment }
+  \n          ;
+  @comment    { simpleString (CommentToken . T.pack) }
+  \-?         { simpleString (CommentToken . T.pack) }
   ()          ;
 }
 
 <bol> {
-  @comment_l  { simpleString (CommentToken . T.pack) }
   \n          ;
   ()          { doBol }
 }
@@ -144,32 +147,15 @@ alexEOF = getLayout >>= \case
        (pn, _, _, _) <- alexGetInput
        toMonadPsi' pn 0 token
 
-startBlockComment :: AlexAction PsiToken
-startBlockComment ((AlexPn p _ _), _, _, _) _ = do
-  s <- alexGetUserState
-  alexSetUserState s { blockComments = [p] }
-  pushLexState nestedComment
-  alexMonadScan
-
 pushBlockComment :: AlexAction PsiToken
-pushBlockComment ((AlexPn p _ _), _, _, _) _ = do
-  s@AlexUserState { blockComments = ps } <- alexGetUserState
-  alexSetUserState s { blockComments = p : ps }
-  alexMonadScan
+pushBlockComment (pn, _, _, s) size = do
+  pushLexState nestedComment
+  toMonadPsi' pn size $ CommentToken (T.pack $ take size s)
 
 popBlockComment :: AlexAction PsiToken
-popBlockComment (pn@(AlexPn pos _ _), _, _, str) _ = do
-  s <- alexGetUserState
-  case blockComments s of
-    [ ] -> __UNREACHABLE__
-    [p] -> do
-      let size = pos - p
-      popLexState
-      alexSetUserState s { blockComments = [] }
-      toMonadPsi' pn size $ CommentToken (T.pack $ take size str)
-    ps  -> do
-      alexSetUserState s { blockComments = tail ps }
-      alexMonadScan
+popBlockComment (pn, _, _, s) size = do
+  popLexState
+  toMonadPsi' pn size $ CommentToken (T.pack $ take size s)
 
 doBol :: AlexAction PsiToken
 doBol (pn@(AlexPn _ _ col), _, _, _) size =
