@@ -16,10 +16,4 @@ checkExit ExitSuccess = pure ()
 checkExit n           = exitWith n
 
 main :: IO ()
-main = do
-  putStrLn ""
-  (_, _, _, h) <- createProcess (proc "perl" ["test_runner.pl"])
-    { cwd = Just "src/test"
-    }
-  checkExit <$> waitForProcess h
-  pure ()
+main = pure ()

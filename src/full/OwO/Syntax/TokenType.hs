@@ -100,6 +100,8 @@ data TokenType
   -- ^ character literal
   | IntegerToken Integer
   -- ^ integer numbers
+  | CommentToken T.Text
+  -- ^ comments. We reserve them to provide better tooling.
 
   | EndOfFileToken
   -- ^ finishes a file

@@ -7,17 +7,13 @@ output and do a comparison.
 
 ### Running tests
 
-A simple `stack test` command can get the job done.
-
-```shell
-$ stack test
-```
-
-The underlying test script can forcibly write the actual output to the expected
-data, so if you want to be asked for it, run the script manually and switch the
-option `--force` on.
+This script relies on relative path so please run it in the `src/test`
+directory.
 
 ```shell
 $ cd src/test
-$ perl test_runner.pl --force
+$ perl test_runner.pl
 ```
+
+Feel free to submit PR to improve this -- I'm very unsatisfied with this way
+of running test script.

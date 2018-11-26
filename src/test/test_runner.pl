@@ -4,12 +4,13 @@ use strict;
 use warnings FATAL => 'all';
 use Term::ANSIColor;
 use v5.10;
+$|++;
 
 my $version = 'owo --version';
 say "$version: @{[ `$version` ]}";
 my @failure = ();
 my $success = 0;
-my $isForce = scalar @ARGV && $ARGV[0] eq '--force';
+my $isCI = defined $ENV{'CI'};
 
 sub ntr {return colored $_[0], 'green';}
 sub red {return colored $_[0], 'red';}
@@ -27,11 +28,12 @@ foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -d testData/*/
         if (length $diff) {
             push @failure, $case;
             map {say red("  $_")} split /\n/, $diff;
-            print colored("  Replace the golden value (y/N)? ", 'cyan');
-            $isForce && getc eq 'y' ? `owo $flags -c $case > $out`
+            next '  CI detected, skip golden value update.' if $isCI;
+            print colored('  Update the golden value (y/N)? ', 'cyan');
+            getc eq 'y' ? `owo $flags -c $case > $out`
                 : say colored(<<'HINT', 'bold yellow');
   Leaving it alone.
-  To update the golden value, run this script directly with --force
+  To update the golden value, run `test_runner.pl` in `src/test` directly.
 HINT
         } else {
             say ntr('  Passed!');

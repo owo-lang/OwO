@@ -22,8 +22,15 @@ jobs:
           path: ~/.local/bin/owo
           destination: owo
       - run:
-          name: Run tests
+          name: Run Haskell tests
           command: stack test
+      - run:
+          name: Run golden-valued tests
+          command: |
+            cd src/test
+            perl --version
+            perl test_runner.pl
+            cd ../..
       - run:
           name: Install hlint
           command: stack install hlint

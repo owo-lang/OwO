@@ -26,6 +26,7 @@ $operator_s  = [ \[ \] \| \= \: \. ]
 @character   = \'([^ \\ \']|\\$escape)\'
 @operator    = $operator_c ($operator_c | $operator_s)*
 @colon_op    = \: ($operator_c | $operator_s)+
+@comment_l   = \-\-[^\n]*
 
 tokens :-
 
@@ -38,6 +39,7 @@ $white_no_nl  ;
 }
 
 <0> {
+  @comment_l  { simpleString (CommentToken . T.pack) }
   \n          { beginCode bol }
   module      { simple ModuleToken }
   open        { simple OpenToken }

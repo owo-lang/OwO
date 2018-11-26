@@ -41,12 +41,12 @@ $ hlint src
 
 ## Testing
 
-You need perl5 \> v5.10 to run tests.
-
-Why perl? Because it's nearly everywhere -- most Linux distributions,
-Windows git-bash (yes, the perl bundled in git-bash is sufficient), macOS, etc.
+The tests are split into two parts -- Haskell tests and golden-valued tests.
+This is because stack is too powerful on Windows.
 
 ### Golden-valued tests
+
+You need perl5 \> v5.10 to run golden-valued tests.
 
 See [this instruction](../src/test/testData/README.md).
 

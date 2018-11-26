@@ -11,3 +11,6 @@ data Bool : Type where
 data Nat : Type where
   zero : Nat
   succ : Nat -> Nat
+
+-- Line comment
+a -- Line comment
