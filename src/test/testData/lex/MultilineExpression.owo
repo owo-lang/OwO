@@ -5,3 +5,8 @@ f = do
   a +
     b
   c
+
+g = do
+   b +
+ c
+   d

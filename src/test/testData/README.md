@@ -18,6 +18,6 @@ data, so if you want to be asked for it, run the script manually and switch the
 option `--force` on.
 
 ```shell
-$ cd src/test/testData
+$ cd src/test
 $ perl test_runner.pl --force
 ```

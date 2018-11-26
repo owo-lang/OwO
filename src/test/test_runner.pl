@@ -29,7 +29,10 @@ foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -d testData/*/
             map {say red("  $_")} split /\n/, $diff;
             print colored("  Replace the golden value (y/N)? ", 'cyan');
             $isForce && getc eq 'y' ? `owo $flags -c $case > $out`
-                : say colored('  Leave it alone.', 'bold yellow');
+                : say colored(<<'HINT', 'bold yellow');
+  Leaving it alone.
+  To update the golden value, run this script directly with --force
+HINT
         } else {
             say ntr('  Passed!');
             $success++;
