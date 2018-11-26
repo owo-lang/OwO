@@ -22,6 +22,9 @@ jobs:
           path: ~/.local/bin/owo
           destination: owo
       - run:
+          name: Run tests
+          command: stack test
+      - run:
           name: Install hlint
           command: stack install hlint
       - save_cache:
@@ -34,10 +37,3 @@ jobs:
       - run:
           name: Run hlint, ignoring errors
           command: hlint src || true
-      - run:
-          name: Run tests
-          command: |
-            cd src/test/testData
-            perl --version
-            perl test_runner.pl
-            cd -

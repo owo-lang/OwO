@@ -15,7 +15,7 @@ sub ntr {return colored $_[0], 'green';}
 sub red {return colored $_[0], 'red';}
 sub redy {return colored $_[0], 'bold red';}
 
-foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -G -d */`) {
+foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -d testData/*/`) {
     say "Fixture $fixture:";
     `touch $fixture.flags`;
     my $flags = `cat $fixture.flags`;

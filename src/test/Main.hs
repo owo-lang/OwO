@@ -3,20 +3,23 @@ module Main where
 -- import           Test.Hspec
 -- import           Text.Pretty.Simple (pPrint)
 
--- import           OwO.Syntax.Parser
--- import           Prelude            hiding (lex)
+import           System.Exit    (ExitCode (..), exitWith)
+import           System.Process
+    ( CreateProcess (..)
+    , createProcess
+    , proc
+    , waitForProcess
+    )
 
-import           System.Exit    (ExitCode (..))
-import           System.Process (CreateProcess (..), createProcess, proc,
-                                 waitForProcess)
-
--- lexAndPrint = pPrint . lex
+checkExit :: ExitCode -> IO ()
+checkExit ExitSuccess = pure ()
+checkExit n           = exitWith n
 
 main :: IO ()
 main = do
   putStrLn ""
   (_, _, _, h) <- createProcess (proc "perl" ["test_runner.pl"])
-    { cwd = Just "src/test/testData"
+    { cwd = Just "src/test"
     }
-  ExitSuccess <- waitForProcess h
-  return ()
+  checkExit <$> waitForProcess h
+  pure ()
