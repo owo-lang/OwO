@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+
 use strict;
 use warnings FATAL => 'all';
 use Term::ANSIColor;
@@ -26,9 +27,10 @@ foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -G -d */`) {
         if (length $diff) {
             push @failure, $case;
             map {say red("  $_")} split /\n/, $diff;
-            print colored("  Replace the golden value (y/N)? ", 'cyan');
-            !$noTerm && getc eq 'y' ? `owo $flags -c $case > $out`
-                : say colored('  Leave it alone.', 'bold yellow');
+            # TODO: Avoid conflicting with `cabal test'.
+            # print colored("  Replace the golden value (y/N)? ", 'cyan');
+            # !$noTerm && getc eq 'y' ? `owo $flags -c $case > $out`
+            #     : say colored('  Leave it alone.', 'bold yellow');
         } else {
             say ntr('  Passed!');
             $success++;

@@ -1,19 +1,17 @@
 module Main where
 
--- import Test.Hspec
+-- import           Test.Hspec
+-- import           Text.Pretty.Simple (pPrint)
 
-import           Text.Pretty.Simple (pPrint)
+-- import           OwO.Syntax.Parser
+-- import           Prelude            hiding (lex)
 
-import           OwO.Syntax.Parser
-import           Prelude            hiding (lex)
+import           System.Exit    (ExitCode (..))
+import           System.Process (system)
 
-lexAndPrint = pPrint . lex
+-- lexAndPrint = pPrint . lex
 
 main :: IO ()
 main = do
-  lexAndPrint $ "module Bla where\n" ++
-                "  a = b"
-  lexAndPrint $ "data Bla : Type where\n" ++
-                "  Rua : B"
-  lexAndPrint $ "codata Bla : Type where\n" ++
-                "  oRA : B"
+  ExitSuccess <- system "bash -c 'cd ./src/test/testData; ./test_runner.pl'"
+  return ()
