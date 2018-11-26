@@ -1,6 +1,5 @@
 {
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE CPP        #-}
 
 module OwO.Syntax.Parser.Lexer where
 
@@ -11,8 +10,6 @@ import           Data.Maybe           (listToMaybe)
 import qualified Data.Text            as T
 import qualified OwO.Util.StrictMaybe as Strict
 import           OwO.Util.Applicative
-
-#include <impossible.h>
 }
 
 %wrapper "monadUserState"
@@ -181,12 +178,12 @@ pushLayout lc = do
 
 popLayout :: Alex LayoutContext
 popLayout = do
-  s@AlexUserState { layoutStack = lcs } <- alexGetUserState
-  case lcs of
-    []        -> alexError "Layout expected but no layout available"
-    lc : lcs' -> do
-      alexSetUserState s { layoutStack = lcs' }
-      pure lc
+  s <- alexGetUserState
+  case layoutStack s of
+    []     -> alexError "Layout expected but no layout available"
+    l : ls -> do
+      alexSetUserState s { layoutStack = ls }
+      pure l
 
 getLayout :: Alex (Maybe LayoutContext)
 getLayout = do
@@ -203,12 +200,12 @@ pushLexState nsc = do
 popLexState :: Alex Int
 popLexState = do
   csc <- alexGetStartCode
-  s@AlexUserState { alexStartCodes = scs } <- alexGetUserState
-  case scs of
-    []        -> alexError "State code expected but no state code available"
-    sc : scs' -> do
-      alexSetUserState s { alexStartCodes = scs' }
-      alexSetStartCode sc
+  st  <- alexGetUserState
+  case alexStartCodes st of
+    []     -> alexError "State code expected but no state code available"
+    s : ss -> do
+      alexSetUserState st { alexStartCodes = ss }
+      alexSetStartCode s
       pure csc
 
 }
