@@ -40,6 +40,14 @@ data PsiFileType
 newtype QModuleName = QModuleName { moduleNameList :: [String] }
   deriving (Eq, Generic, Ord)
 
+hasParentModule :: QModuleName -> Bool
+hasParentModule (QModuleName ls) = ls /= []
+
+parentModule :: QModuleName -> Maybe QModuleName
+parentModule (QModuleName list) = case list of
+  [      ] -> Nothing
+  (l : ls) -> Just $ QModuleName { moduleNameList = ls }
+
 instance Show QModuleName where
   show (QModuleName ls) = concat $ ('.' :) <$> ls
 

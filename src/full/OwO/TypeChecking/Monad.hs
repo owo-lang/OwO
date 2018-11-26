@@ -8,6 +8,7 @@
 --   We call it TypeCheckingMonad, in short TCM, as Agda does.
 module OwO.TypeChecking.Monad where
 
+import           Control.Applicative        (Alternative (..), (<|>))
 import           Control.Monad
 import           Control.Monad.State
 import           Control.Monad.Trans.Except
@@ -42,7 +43,8 @@ allNames ctx = Map.toList ctx >>=
 -- | Lookup a definition in a known module
 lookupCtxWithName :: QModuleName -> TextName -> TCCtx a -> Maybe a
 lookupCtxWithName currentModule name ctx =
-  Map.lookup currentModule ctx >>= Map.lookup name
+  (Map.lookup currentModule ctx >>= Map.lookup name) <|>
+  (parentModule currentModule >>= \m -> lookupCtxWithName m name ctx)
 
 lookupCtx :: QName -> TCCtx a -> Maybe a
 lookupCtx (QName currentModule name) =
@@ -61,14 +63,24 @@ addDefinition (QName currentModule name) =
 -- | TypeChecking State. I haven't decide on whether to store warnings here
 --   (but errors should definitely be in the other side of the Monad)
 data TCState = TypeCheckingState
-  { stateOptions :: CompilerOptions
+  { stateOptions     :: CompilerOptions
   -- ^ This is passed all around
+  , stateDefinitions :: TCCtx Definition
+  -- ^ A symbol table containing all type-checked definitions
   } deriving (Generic, Show)
+
+emptyTCState :: CompilerOptions -> TCState
+emptyTCState opts = TypeCheckingState
+  { stateOptions     = opts
+  , stateDefinitions = emptyCtx
+  }
 
 -- | TypeChecking Environment
 data TCEnv = TypeCheckingEnv
   { envState        :: TCState
   -- ^ This is passed all around
+  , envDefinitions :: TCCtx Definition
+  -- ^ Local definitions
   } deriving (Generic, Show)
 
 newtype TCErr' t

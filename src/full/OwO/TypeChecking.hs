@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP #-}
+
 module OwO.TypeChecking where
 
 import           OwO.Syntax.Abstract
@@ -12,5 +13,6 @@ import           OwO.TypeChecking.Reduce
 typeCheck :: TCEnv -> PsiTerm -> Either TCErr Term
 typeCheck env term = __TODO__
 
-typeCheckFile :: PsiFile -> TCM ()
-typeCheckFile file = __TODO__
+typeCheckFile :: TCState -> PsiFile -> TCM ()
+typeCheckFile state file = do
+  __TODO__
