@@ -39,5 +39,5 @@ jobs:
           command: |
             cd src/test/testData
             perl --version
-            perl test_runner.pl --no-terminal
+            perl test_runner.pl --force
             cd -

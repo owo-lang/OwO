@@ -7,11 +7,14 @@ module Main where
 -- import           Prelude            hiding (lex)
 
 import           System.Exit    (ExitCode (..))
-import           System.Process (system)
+import           System.Process (runProcess, waitForProcess)
 
 -- lexAndPrint = pPrint . lex
 
 main :: IO ()
 main = do
-  ExitSuccess <- system "bash -c 'cd ./src/test/testData; ./test_runner.pl'"
+  putStrLn ""
+  handle <- runProcess "perl" ["test_runner.pl"]
+    (Just "src/test/testData") Nothing Nothing Nothing Nothing
+  code <- waitForProcess handle
   return ()
