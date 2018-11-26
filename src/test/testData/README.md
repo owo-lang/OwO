@@ -7,14 +7,13 @@ output and do a comparison.
 
 ### Running tests
 
-A simple `cabal test` command can get the job done.  For a more verbose test
-information, pass the option `--show-details=streaming` to `cabal`.
+A simple `stack test` command can get the job done.
 
 ```shell
-$ cabal test --show-details=streaming
+$ stack test
 ```
 
-The underlying test script can forcibly writes the actual output to the expected
+The underlying test script can forcibly write the actual output to the expected
 data, so if you want to be asked for it, run the script manually and switch the
 option `--force` on.
 
