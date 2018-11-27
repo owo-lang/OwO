@@ -13,6 +13,7 @@ import           Control.Monad
 import           Control.Monad.State
 import           Control.Monad.Trans.Except
 import qualified Data.Map                   as Map
+import qualified Data.Text                  as T
 
 import           OwO.Options
 import           OwO.Syntax.Abstract
@@ -25,8 +26,10 @@ import           GHC.Generics               (Generic)
 
 #include <impossible.h>
 
+type CtxBindingKey = T.Text
+
 -- | Context
-type TCCtx a = Map.Map QModuleName (Map.Map TextName a)
+type TCCtx a = Map.Map QModuleName (Map.Map CtxBindingKey a)
 
 emptyCtx :: TCCtx a
 emptyCtx = Map.empty
@@ -36,29 +39,29 @@ mapCtx = fmap . fmap
 
 -- | Maybe useful for completion?
 --   Dunno, LOL.
-allNames :: TCCtx a -> [(QModuleName, TextName)]
+allNames :: TCCtx a -> [(QModuleName, CtxBindingKey)]
 allNames ctx = Map.toList ctx >>=
   \ (m, ns) -> (m,) <$> Map.keys ns
 
 -- | Lookup a definition in a known module
-lookupCtxWithName :: QModuleName -> TextName -> TCCtx a -> Maybe a
+lookupCtxWithName :: QModuleName -> CtxBindingKey -> TCCtx a -> Maybe a
 lookupCtxWithName currentModule name ctx =
   (Map.lookup currentModule ctx >>= Map.lookup name) <|>
   (parentModule currentModule >>= \m -> lookupCtxWithName m name ctx)
 
 lookupCtx :: QName -> TCCtx a -> Maybe a
-lookupCtx (QName currentModule name) =
-  lookupCtxWithName currentModule $ simpleName name
+lookupCtx (QName currentModule _ name _) =
+  lookupCtxWithName currentModule $ C.textOfName name
 
 -- | Overwriting
-addDefinitionWithName :: QModuleName -> TextName -> a -> TCCtx a -> TCCtx a
+addDefinitionWithName :: QModuleName -> CtxBindingKey -> a -> TCCtx a -> TCCtx a
 addDefinitionWithName targetModule name a ctx = maybe ctx
   ((\ctx' -> Map.insert targetModule ctx' ctx) <$> Map.insert name a)
   (Map.lookup targetModule ctx)
 
 addDefinition :: QName -> a -> TCCtx a -> TCCtx a
-addDefinition (QName currentModule name) =
-  addDefinitionWithName currentModule $ simpleName name
+addDefinition (QName currentModule _ name _) =
+  addDefinitionWithName currentModule $ C.textOfName name
 
 -- | TypeChecking State. I haven't decide on whether to store warnings here
 --   (but errors should definitely be in the other side of the Monad)
@@ -77,14 +80,15 @@ emptyTCState opts = TypeCheckingState
 
 -- | TypeChecking Environment
 data TCEnv = TypeCheckingEnv
-  { envState        :: TCState
+  { envState       :: TCState
   -- ^ This is passed all around
   , envDefinitions :: TCCtx Definition
   -- ^ Local definitions
   } deriving (Generic, Show)
 
-newtype TCErr' t
+data TCErr' t
   = OtherErr t
+  | UnresolvedReferenceErr C.Name
   deriving (Eq, Functor, Show)
 
 -- | TypeChecking Error

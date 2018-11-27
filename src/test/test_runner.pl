@@ -18,14 +18,12 @@ sub redy {return colored $_[0], 'bold red';}
 
 foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -d testData/*/`) {
     say "Fixture $fixture:";
-    my $fixtureFlags = '';
-    $fixtureFlags = `cat $fixture.flags` if -e "$fixture.flags";
+    my $fixtureFlags = -e "$fixture.flags" ? `cat $fixture.flags` : '';
     foreach my $case (split /[ \t\n]+/, `ls -G $fixture/*.owo`) {
         say " Case $case:";
         my $out = $case =~ s/\.owo/\.out/rg;
         my $flagFile = $case =~ s/\.owo/\.flags/rg;
-        my $caseFlags = '';
-        $caseFlags = `cat $flagFile` if -e $flagFile;
+        my $caseFlags = -e $flagFile ? `cat $flagFile` : '';
         `touch $out`;
         my $flags = "$fixtureFlags $caseFlags" =~ s/[\n|\r]//rg;
         my $diff = `owo $flags -c $case | diff --strip-trailing-cr - $out`;

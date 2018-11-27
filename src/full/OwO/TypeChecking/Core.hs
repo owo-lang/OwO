@@ -19,6 +19,7 @@ module OwO.TypeChecking.Core
 import qualified Data.Text           as T
 
 import           OwO.Syntax.Abstract
+import qualified OwO.Syntax.Concrete as C
 import           OwO.Syntax.Common
 import           OwO.Syntax.Position
 
@@ -27,7 +28,7 @@ import           GHC.Generics        (Generic)
 #include <impossible.h>
 
 -- | Alias, for refactoring convenience
-type TextName = T.Text
+type TextName = C.Name
 
 data NameType
   = BoundName

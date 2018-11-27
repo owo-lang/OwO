@@ -13,22 +13,25 @@ import           OwO.Syntax.Position
 
 import           GHC.Generics        (Generic)
 
-data PsiTerm
-  = PsiReference Loc QName
+-- | The type parameter c is the name representation, which is probably T.Text
+data PsiTerm' c
+  = PsiReference Loc c
   -- ^ A reference to a variable
   {-
-  | PsiLambda Loc QName Loc PsiTerm PsiTerm
+  | PsiLambda Loc c Loc (PsiTerm' c) (PsiTerm' c)
   -- ^ Second interval is the name
   -}
-  | PsiPatternVar Loc QName
+  | PsiPatternVar Loc c
   -- ^ Pattern variable
   | PsiImpossible Loc
   -- ^ Absurd pattern, impossible pattern
-  | PsiDotPattern Loc PsiTerm
+  | PsiDotPattern Loc (PsiTerm' c)
   -- ^ Dotted pattern
-  | PsiMetaVar Loc QName
+  | PsiMetaVar Loc c
   -- ^ Meta variable
   deriving (Eq, Generic, Ord, Show)
+
+type PsiTerm = PsiTerm' T.Text
 
 -- | Program Structure Item: File Type
 data PsiFileType
@@ -51,34 +54,20 @@ parentModule (QModuleName list) = case list of
 instance Show QModuleName where
   show (QModuleName ls) = concat $ ('.' :) <$> ls
 
--- | A name is a unique identifier and a suggestion for a concrete name. The
+-- | Qualified name, with module name
+--   A name is a unique identifier and a suggestion for a concrete name. The
 --   concrete name contains the source location (if any) of the name. The
 --   source location of the binding site is also recorded.
-data Name = Name
-  { nameId         :: !NameId
+--   In definitions, the module name should be clear, so we add the module name
+--   information here
+data QName = QName
+  { nameModule     :: QModuleName
+  , nameId         :: !NameId
   , nameConcrete   :: C.Name
   , nameBindingLoc :: Loc
   } deriving (Eq, Generic, Ord, Show)
 
-mkName :: C.Name -> NameId -> Name
-mkName name id = Name
-  { nameId = id
-  , nameConcrete = name
-  , nameBindingLoc = C.locationOfName name
-  }
-
--- | Qualified name, with module name
---   In definitions, the module name should be clear, so we add the module name
---   information here
-data QName = QName
-  { moduleName  :: QModuleName
-  , concretName :: Name
-  } deriving (Eq, Generic, Ord, Show)
-
-simpleQName :: QName -> T.Text
-simpleQName = C.textOfName . nameConcrete . concretName
-
-simpleName :: Name -> T.Text
+simpleName :: QName -> T.Text
 simpleName = C.textOfName . nameConcrete
 
 -- | Program Structure Item: File
@@ -108,25 +97,25 @@ data FnPragma
 
 type FnPragmas = [FnPragma]
 
-data PsiDataCons' t = PsiDataCons
-  { dataConsName :: QName
+data PsiDataCons' t c = PsiDataCons
+  { dataConsName :: c
   , dataConsLoc  :: Loc
-  , dataConsBody :: t
+  , dataConsBody :: t c
   } deriving (Eq, Functor, Generic, Ord, Show)
 
 -- | Inductive data family
-data PsiDataInfo' t
+data PsiDataInfo' t c
   = PsiDataDefinition
-    { dataName     :: QName
+    { dataName     :: c
     , dataNameLoc  :: Loc
-    , dataTypeCons :: t
-    , dataCons     :: [PsiDataCons' t]
+    , dataTypeCons :: t c
+    , dataCons     :: [PsiDataCons' t c]
     }
   -- ^ An in-place definition
   | PsiDataSignature
-    { dataName     :: QName
+    { dataName     :: c
     , dataNameLoc  :: Loc
-    , dataTypeCons :: t
+    , dataTypeCons :: t c
     } deriving (Eq, Functor, Generic, Ord, Show)
   -- ^ A data type signature, for mutual recursion
 
@@ -136,17 +125,17 @@ data PsiDataInfo' t
 --    within a "with" clause)
 -- 2. The list of extra 'with' patterns
 -- 3. The right-hand side
--- 4. The where block (PDecl' t)
-data PsiPatternInfo' t
-  = PsiPatternSimple  Loc QName t [t] t [PsiDeclaration' t]
+-- 4. The where block (PsiDeclaration' t)
+data PsiPatternInfo' t c
+  = PsiPatternSimple  Loc c (t c) [t c] (t c) [PsiDeclaration' t c]
   -- ^ Most simple pattern
   -- TODO
   {-
-  | PsiPatternWith    Loc QName t [t] t [PsiDeclaration' t]
+  | PsiPatternWith    Loc c (t c) [t c] (t c) [PsiDeclaration' t c]
   -- ^ Pattern with 'with', we may use the keyword 'case'
-  | PsiPatternSimpleR Loc         [t] t [PsiDeclaration' t]
+  | PsiPatternSimpleR Loc         [t c] (t c) [PsiDeclaration' t c]
   -- ^ Most simple pattern
-  | PsiPatternWithR   Loc         [t] t [PsiDeclaration' t]
+  | PsiPatternWithR   Loc         [t c] (t c) [PsiDeclaration' t c]
   -- ^ Pattern with 'with', we may use the keyword 'case'
   -}
   deriving (Eq, Generic, Functor, Ord, Show)
@@ -159,24 +148,24 @@ type DataPragmas = [DataPragma]
 
 -- | Top-level declarations
 --   TODOs: PsiCodata, PsiPattern, PsiCopattern
-data PsiDeclaration' t
-  = PsiFixity Loc PsiFixityInfo [QName]
+data PsiDeclaration' t c
+  = PsiFixity Loc PsiFixityInfo [c]
   -- ^ infix, infixl, infixr
-  | PsiType Loc QName FnPragmas t
+  | PsiType Loc c FnPragmas (t c)
   -- ^ Type signature
-  | PsiSubmodule Loc QModuleName [PsiDeclaration' t]
+  | PsiSubmodule Loc QModuleName [PsiDeclaration' t c]
   -- ^ Module defined in modules
-  | PsiPostulate Loc QName FnPragmas t
+  | PsiPostulate Loc c FnPragmas (t c)
   -- ^ Postulate, unsafe
-  | PsiPrimitive Loc QName t
+  | PsiPrimitive Loc c (t c)
   -- ^ Primitive
-  | PsiData Loc QName DataPragmas (PsiDataInfo' t)
+  | PsiData Loc QName DataPragmas (PsiDataInfo' t c)
   -- ^ Inductive data families
-  | PsiPattern Loc FnPragmas [PsiPatternInfo' t]
-  -- ^ Inductive data families
+  | PsiPattern Loc FnPragmas [PsiPatternInfo' t c]
+  -- ^ A pattern matching clause
   deriving (Eq, Functor, Generic, Ord, Show)
 
-type PsiDeclaration = PsiDeclaration' PsiTerm
-type PsiDataCons    = PsiDataCons' PsiTerm
-type PsiDataInfo    = PsiDataInfo' PsiTerm
-type PsiPatternInfo = PsiPatternInfo' PsiTerm
+type PsiDeclaration = PsiDeclaration' PsiTerm' T.Text
+type PsiDataCons    = PsiDataCons'    PsiTerm' T.Text
+type PsiDataInfo    = PsiDataInfo'    PsiTerm' T.Text
+type PsiPatternInfo = PsiPatternInfo' PsiTerm' T.Text
