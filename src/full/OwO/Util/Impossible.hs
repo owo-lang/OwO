@@ -35,7 +35,7 @@ instance Show Impossible where
     , "Location of the erwor: " ++ file ++ ":" ++ show line
     ]
   show (Unimplemented file line) = unlines
-    [ "We rweached a TODO, pwease wait until we impwment this OwO."
+    [ "We rweached a TODO, pwease wait until we impwement this OwO."
     , "Location of the TODO: " ++ file ++ ":" ++ show line
     ]
 
