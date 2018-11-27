@@ -36,7 +36,7 @@ dumpTokens n file
       1 -> simpleToken <$> tokens
       2 -> prettyToken <$> tokens
   | otherwise = do
-      hPutStrLn stderr "error: invalid --dump-tokens verbosity"
+      hPutStrLn stderr ("error: invalid --dump-tokens verbosity " ++ show n)
       exitFailure
 
 dumpAst :: FilePath -> IO ()

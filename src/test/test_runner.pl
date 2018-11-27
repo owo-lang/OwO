@@ -20,6 +20,7 @@ foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -d testData/*/
     say "Fixture $fixture:";
     my $fixtureFlags = '';
     $fixtureFlags = `cat $fixture.flags` if -e "$fixture.flags";
+    chomp $fixtureFlags;
     foreach my $case (split /[ \t\n]+/, `ls -G $fixture/*.owo`) {
         say " Case $case:";
         my $out = $case =~ s/\.owo/\.out/rg;
