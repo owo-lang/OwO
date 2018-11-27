@@ -1,37 +1,95 @@
+{-# LANGUAGE CPP                   #-}
 {-# LANGUAGE DeriveFunctor         #-}
 {-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE TypeOperators         #-}
 
-module OwO.Syntax.Abstract where
+module OwO.Syntax.AbsSyntaxTree
+  ( Name(..)
+  , locationOfName
+  , textOfName
+
+  , PsiTerm'(..)
+  , PsiTerm
+
+  , PsiDataCons'(..)
+  , PsiDataCons
+
+  , PsiDataInfo'(..)
+  , PsiDataInfo
+
+  , PsiPatternInfo'(..)
+  , PsiPatternInfo
+
+  , FnPragma(..)
+  , FnPragmas
+  , DataPragma(..)
+  , DataPragmas
+
+  , PsiFileType(..)
+  , PsiFile(..)
+
+  , PsiDeclaration'(..)
+  , PsiDeclaration
+  , PsiFixityInfo
+
+  , QModuleName
+  , parentModule
+  , hasParentModule
+  ) where
 
 import qualified Data.Text           as T
 
 import           OwO.Syntax.Common
-import qualified OwO.Syntax.Concrete as C
 import           OwO.Syntax.Position
 
 import           GHC.Generics        (Generic)
 
--- | The type parameter c is the name representation, which is probably T.Text
+#include <impossible.h>
+
+-- | A name is a non-empty list of alternating 'Id's and 'Hole's. A normal name
+--   is represented by a singleton list, and operators are represented by a list
+--   with 'Hole's where the arguments should go. For instance:
+--   @[Hole,Id "+",Hole]@
+--   is infix addition.
+--
+--   Equality and ordering on @Name@s are defined to ignore interval so same
+--   names in different locations are equal.
+data Name
+  = Name   Loc T.Text -- ^ A identifier.
+  | NoName Loc NameId -- ^ @_@.
+  deriving (Generic, Ord, Show)
+
+locationOfName :: Name -> Loc
+locationOfName (Name   l _) = l
+locationOfName (NoName l _) = l
+
+textOfName :: Name -> T.Text
+textOfName (Name   _ n) = n
+textOfName (NoName _ n) = T.pack $ "_" ++ show n
+
+instance Eq Name where
+  Name _ a == Name _ b = a == b
+  _ == _ = False
+
+-- | The type parameter c is the name representation, which is probably C.Name
 data PsiTerm' c
-  = PsiReference Loc c
+  = PsiReference c
   -- ^ A reference to a variable
   {-
-  | PsiLambda Loc c Loc (PsiTerm' c) (PsiTerm' c)
-  -- ^ Second interval is the name
+  | PsiLambda Loc c (PsiTerm' c) (PsiTerm' c)
   -}
-  | PsiPatternVar Loc c
+  | PsiPatternVar c
   -- ^ Pattern variable
   | PsiImpossible Loc
   -- ^ Absurd pattern, impossible pattern
-  | PsiDotPattern Loc (PsiTerm' c)
+  | PsiDotPattern (PsiTerm' c)
   -- ^ Dotted pattern
-  | PsiMetaVar Loc c
+  | PsiMetaVar c
   -- ^ Meta variable
   deriving (Eq, Generic, Ord, Show)
 
-type PsiTerm = PsiTerm' T.Text
+type PsiTerm = PsiTerm' Name
 
 -- | Program Structure Item: File Type
 data PsiFileType
@@ -53,22 +111,6 @@ parentModule (QModuleName list) = case list of
 
 instance Show QModuleName where
   show (QModuleName ls) = concat $ ('.' :) <$> ls
-
--- | Qualified name, with module name
---   A name is a unique identifier and a suggestion for a concrete name. The
---   concrete name contains the source location (if any) of the name. The
---   source location of the binding site is also recorded.
---   In definitions, the module name should be clear, so we add the module name
---   information here
-data QName = QName
-  { nameModule     :: QModuleName
-  , nameId         :: !NameId
-  , nameConcrete   :: C.Name
-  , nameBindingLoc :: Loc
-  } deriving (Eq, Generic, Ord, Show)
-
-simpleName :: QName -> T.Text
-simpleName = C.textOfName . nameConcrete
 
 -- | Program Structure Item: File
 data PsiFile = PsiFile
@@ -149,23 +191,23 @@ type DataPragmas = [DataPragma]
 -- | Top-level declarations
 --   TODOs: PsiCodata, PsiPattern, PsiCopattern
 data PsiDeclaration' t c
-  = PsiFixity Loc PsiFixityInfo [c]
+  = PsiFixity PsiFixityInfo [c]
   -- ^ infix, infixl, infixr
-  | PsiType Loc c FnPragmas (t c)
+  | PsiType c FnPragmas (t c)
   -- ^ Type signature
-  | PsiSubmodule Loc QModuleName [PsiDeclaration' t c]
+  | PsiSubmodule QModuleName [PsiDeclaration' t c]
   -- ^ Module defined in modules
-  | PsiPostulate Loc c FnPragmas (t c)
+  | PsiPostulate c FnPragmas (t c)
   -- ^ Postulate, unsafe
-  | PsiPrimitive Loc c (t c)
+  | PsiPrimitive c (t c)
   -- ^ Primitive
-  | PsiData Loc QName DataPragmas (PsiDataInfo' t c)
+  | PsiData c DataPragmas (PsiDataInfo' t c)
   -- ^ Inductive data families
-  | PsiPattern Loc FnPragmas [PsiPatternInfo' t c]
+  | PsiPattern FnPragmas [PsiPatternInfo' t c]
   -- ^ A pattern matching clause
   deriving (Eq, Functor, Generic, Ord, Show)
 
-type PsiDeclaration = PsiDeclaration' PsiTerm' T.Text
-type PsiDataCons    = PsiDataCons'    PsiTerm' T.Text
-type PsiDataInfo    = PsiDataInfo'    PsiTerm' T.Text
-type PsiPatternInfo = PsiPatternInfo' PsiTerm' T.Text
+type PsiDeclaration = PsiDeclaration' PsiTerm' Name
+type PsiDataCons    = PsiDataCons'    PsiTerm' Name
+type PsiDataInfo    = PsiDataInfo'    PsiTerm' Name
+type PsiPatternInfo = PsiPatternInfo' PsiTerm' Name

@@ -5,8 +5,7 @@
 
 -- | Core language
 module OwO.TypeChecking.Core
-  ( TextName
-  , NameType(..)
+  ( NameType(..)
   , ULevel(..)
   , BinderInfo(..)
   , ConstInfo(..)
@@ -16,19 +15,15 @@ module OwO.TypeChecking.Core
   , Definition(..)
   ) where
 
-import qualified Data.Text           as T
+import qualified Data.Text                as T
 
-import           OwO.Syntax.Abstract
-import qualified OwO.Syntax.Concrete as C
+import           OwO.Syntax.AbsSyntaxTree
 import           OwO.Syntax.Common
 import           OwO.Syntax.Position
 
-import           GHC.Generics        (Generic)
+import           GHC.Generics             (Generic)
 
 #include <impossible.h>
-
--- | Alias, for refactoring convenience
-type TextName = C.Name
 
 data NameType
   = BoundName
@@ -88,8 +83,8 @@ data Term' i
 
 -- TODO
 
--- | Term should have a @TextName@ coming from the parser
-type Term = Term' TextName
+-- | Term should have a @Name@ coming from the parser
+type Term = Term' Name
 -- | Aha! Dependent type!
 type Type = Term
 

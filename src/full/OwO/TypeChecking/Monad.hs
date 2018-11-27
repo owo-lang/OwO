@@ -16,9 +16,8 @@ import qualified Data.Map                   as Map
 import qualified Data.Text                  as T
 
 import           OwO.Options
-import           OwO.Syntax.Abstract
+import           OwO.Syntax.AbsSyntaxTree
 import           OwO.Syntax.Common
-import qualified OwO.Syntax.Concrete        as C
 import           OwO.Syntax.Position
 import           OwO.TypeChecking.Core
 
@@ -49,9 +48,9 @@ lookupCtxWithName currentModule name ctx =
   (Map.lookup currentModule ctx >>= Map.lookup name) <|>
   (parentModule currentModule >>= \m -> lookupCtxWithName m name ctx)
 
-lookupCtx :: QName -> TCCtx a -> Maybe a
-lookupCtx (QName currentModule _ name _) =
-  lookupCtxWithName currentModule $ C.textOfName name
+-- lookupCtx :: QName -> TCCtx a -> Maybe a
+-- lookupCtx (QName currentModule _ name _) =
+--   lookupCtxWithName currentModule $ textOfName name
 
 -- | Overwriting
 addDefinitionWithName :: QModuleName -> CtxBindingKey -> a -> TCCtx a -> TCCtx a
@@ -59,9 +58,9 @@ addDefinitionWithName targetModule name a ctx = maybe ctx
   ((\ctx' -> Map.insert targetModule ctx' ctx) <$> Map.insert name a)
   (Map.lookup targetModule ctx)
 
-addDefinition :: QName -> a -> TCCtx a -> TCCtx a
-addDefinition (QName currentModule _ name _) =
-  addDefinitionWithName currentModule $ C.textOfName name
+-- addDefinition :: QName -> a -> TCCtx a -> TCCtx a
+-- addDefinition (QName currentModule _ name _) =
+--   addDefinitionWithName currentModule $ textOfName name
 
 -- | TypeChecking State. I haven't decide on whether to store warnings here
 --   (but errors should definitely be in the other side of the Monad)
@@ -88,7 +87,7 @@ data TCEnv = TypeCheckingEnv
 
 data TCErr' t
   = OtherErr t
-  | UnresolvedReferenceErr C.Name
+  | UnresolvedReferenceErr Name
   deriving (Eq, Functor, Show)
 
 -- | TypeChecking Error
