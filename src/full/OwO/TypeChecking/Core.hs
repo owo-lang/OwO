@@ -19,13 +19,13 @@ module OwO.TypeChecking.Core
   , Definition(..)
   ) where
 
-import qualified Data.Text                as T
+import qualified Data.Text           as T
 
 import           OwO.Syntax.Abstract
 import           OwO.Syntax.Common
 import           OwO.Syntax.Position
 
-import           GHC.Generics             (Generic)
+import           GHC.Generics        (Generic)
 
 #include <impossible.h>
 
@@ -103,4 +103,6 @@ typeUniverseOfLevel i = SimpleDefinition (TType $ ULevelLit $ succ i) (TType $ U
 
 -- | Module name for type universes. Like a placeholder
 typeUniverseModule :: QModuleName
-typeUniverseModule = QModuleName ["OwO", "Primitive"]
+typeUniverseModule = QModuleName
+  { moduleNameList = T.pack <$> ["OwO", "Primitive"]
+  }

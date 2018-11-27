@@ -33,7 +33,7 @@ module OwO.Syntax.Abstract
   , PsiDeclaration
   , PsiFixityInfo
 
-  , QModuleName
+  , QModuleName(..)
   , parentModule
   , hasParentModule
   ) where
@@ -98,7 +98,7 @@ data PsiFileType
   deriving (Eq, Generic, Ord, Show)
 
 -- | Qualified Name
-newtype QModuleName = QModuleName { moduleNameList :: [String] }
+newtype QModuleName = QModuleName { moduleNameList :: [T.Text] }
   deriving (Eq, Generic, Ord)
 
 hasParentModule :: QModuleName -> Bool
@@ -110,7 +110,7 @@ parentModule (QModuleName list) = case list of
   (l : ls) -> Just $ QModuleName { moduleNameList = ls }
 
 instance Show QModuleName where
-  show (QModuleName ls) = concat $ ('.' :) <$> ls
+  show (QModuleName ls) = concat $ ('.' :) . T.unpack <$> ls
 
 -- | Program Structure Item: File
 data PsiFile = PsiFile
