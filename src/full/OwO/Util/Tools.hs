@@ -37,4 +37,4 @@ dumpTokens file hideLocation = lex <$> readFile file >>= \case
       in mapM_ putStrLn $ f <$> tokens
 
 dumpAst :: FilePath -> Bool -> IO ()
-dumpAst file hideLocation = __TODO__
+dumpAst file hideLocation = return __TODO__

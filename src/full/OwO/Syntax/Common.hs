@@ -32,7 +32,7 @@ instance Show NameId where
 instance Enum NameId where
   succ (NameId n m)     = NameId (n + 1) m
   pred (NameId n m)     = NameId (n - 1) m
-  toEnum n              = __IMPOSSIBLE__ -- ^ should not be used
+  toEnum                = __IMPOSSIBLE__ -- ^ should not be used
   fromEnum (NameId n _) = fromIntegral n
 
 --------------------------------------------------------------------------------
