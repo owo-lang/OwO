@@ -11,7 +11,8 @@ import           OwO.Options
 data CmdOptions = CmdOptions
   { compilerInputFile           :: Maybe FilePath
   , compilerIncludePaths        :: [FilePath]
-  , compilerDumpTokVerbose      :: Int
+  , compilerDumpSimple          :: Bool
+  , compilerDumpToken           :: Bool
   , compilerDumpAst             :: Bool
   , showVersion                 :: Bool
   , showHelp                    :: Bool
@@ -45,11 +46,14 @@ options = customExecParser pref information
                    <> metavar "DIR"
                    <> short 'I'
                    )
-      <*> (length <$> many
-        (flag' () $  long "dump-tokens"
-                  <> short 'S'
-                  <> help "Scan the file and dump tokens, -SS for full info"
-                  ))
+      <*> switch
+          (  long "dump-simple"
+          <> help "Dump Tokens/AST without their positions"
+          )
+      <*> switch
+          (  long "dump-tokens"
+          <> help "Scan the file and dump tokens"
+          )
       <*> switch
           (  long "dump-ast"
           <> help "Parse the file and print the abstract syntax tree"

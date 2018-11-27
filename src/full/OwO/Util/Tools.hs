@@ -28,16 +28,12 @@ prettyToken token = show (tokenType token) ++ " " ++
 simpleToken :: PsiToken -> String
 simpleToken token = show (tokenType token)
 
-dumpTokens :: Int -> FilePath -> IO ()
-dumpTokens n file
-  | n > 0 && n < 3 = lex <$> readFile file >>= \case
+dumpTokens :: FilePath -> Bool -> IO ()
+dumpTokens file isSimple = lex <$> readFile file >>= \case
     Left  errMsg -> hPutStrLn stderr errMsg >> exitFailure
-    Right tokens -> mapM_ putStrLn $ case n of
-      1 -> simpleToken <$> tokens
-      2 -> prettyToken <$> tokens
-  | otherwise = do
-      hPutStrLn stderr ("error: invalid --dump-tokens verbosity " ++ show n)
-      exitFailure
+    Right tokens -> mapM_ putStrLn $ case isSimple of
+      True  -> simpleToken <$> tokens
+      False -> prettyToken <$> tokens
 
-dumpAst :: FilePath -> IO ()
-dumpAst = __TODO__
+dumpAst :: FilePath -> Bool -> IO ()
+dumpAst file isSimple = __TODO__
