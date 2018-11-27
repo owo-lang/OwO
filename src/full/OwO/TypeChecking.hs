@@ -6,7 +6,7 @@ module OwO.TypeChecking where
 import           Data.Functor             ((<&>))
 import           Data.Maybe               (catMaybes)
 
-import           OwO.Syntax.AbsSyntaxTree
+import           OwO.Syntax.Abstract
 import           OwO.TypeChecking.Core
 import           OwO.TypeChecking.Match
 import           OwO.TypeChecking.Monad

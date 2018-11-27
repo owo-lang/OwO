@@ -4,7 +4,7 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE TypeOperators         #-}
 
-module OwO.Syntax.AbsSyntaxTree
+module OwO.Syntax.Abstract
   ( Name(..)
   , locationOfName
   , textOfName

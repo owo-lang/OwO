@@ -17,7 +17,7 @@ module OwO.TypeChecking.Core
 
 import qualified Data.Text                as T
 
-import           OwO.Syntax.AbsSyntaxTree
+import           OwO.Syntax.Abstract
 import           OwO.Syntax.Common
 import           OwO.Syntax.Position
 

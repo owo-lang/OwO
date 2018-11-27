@@ -59,7 +59,7 @@ library
                   , OwO.Main
                   , OwO.Version
 
-                  , OwO.Syntax.AbsSyntaxTree
+                  , OwO.Syntax.Abstract
                   , OwO.Syntax.Common
                   , OwO.Syntax.Position
                   , OwO.Syntax.TokenType

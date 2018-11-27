@@ -16,7 +16,7 @@ import qualified Data.Map                   as Map
 import qualified Data.Text                  as T
 
 import           OwO.Options
-import           OwO.Syntax.AbsSyntaxTree
+import           OwO.Syntax.Abstract
 import           OwO.Syntax.Common
 import           OwO.Syntax.Position
 import           OwO.TypeChecking.Core
