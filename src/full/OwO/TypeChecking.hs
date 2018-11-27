@@ -18,9 +18,11 @@ typeCheck :: TCEnv -> PsiTerm -> Either TCErr Term
 typeCheck env term = return __TODO__
 
 typeCheckFile :: TCState -> PsiFile -> TCM ()
-typeCheckFile state file@(PsiFile _ moduleName decls) = do
-  let typeSignatures = catMaybes $ decls <&> \case
-        PsiType name pragmas t -> Just (name, pragmas, t)
+typeCheckFile state file = do
+  let decls      = declarations file
+  let moduleName = topLevelModuleName file
+  let signatures = catMaybes $ decls <&> \case
+        PsiType name pragmas t -> Just (name, (pragmas, t))
         _ -> Nothing
   -- TODO:
   --  Look for definitions, give warnings about unimplemented definitions

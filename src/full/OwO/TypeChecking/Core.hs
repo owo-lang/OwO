@@ -9,9 +9,13 @@ module OwO.TypeChecking.Core
   , ULevel(..)
   , BinderInfo(..)
   , ConstInfo(..)
+
   , Term'(..)
   , Term
   , Type
+  , typeUniverseOfLevel
+  , typeUniverseModule
+
   , Definition(..)
   ) where
 
@@ -92,3 +96,11 @@ data Definition
   = SimpleDefinition !Type !Term
   -- ^ No type signature, just an expression with (optional) type specified
   deriving (Eq, Generic, Ord, Show)
+
+-- | Built-in definition: Type0, Type1, etc
+typeUniverseOfLevel :: Int -> Definition
+typeUniverseOfLevel i = SimpleDefinition (TType $ ULevelLit $ succ i) (TType $ ULevelLit i)
+
+-- | Module name for type universes. Like a placeholder
+typeUniverseModule :: QModuleName
+typeUniverseModule = QModuleName ["OwO", "Primitive"]
