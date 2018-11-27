@@ -17,23 +17,24 @@ import           System.IO
 #include <impossible.h>
 
 prettyToken :: PsiToken -> String
-prettyToken token = show (tokenType token) ++ " " ++
+prettyToken token = simpleToken token ++ " " ++
     printLoc (iStart loc) ++ " " ++ printLoc (iEnd loc)
   where
     loc = location token
     printLoc loc = "(" ++ show (posPos  loc) ++
                    " " ++ show (posLine loc) ++
-                   " " ++ show (posCol  loc) ++ ")"
+                   " " ++ show (posCol  loc) ++
+                   ")"
 
 simpleToken :: PsiToken -> String
-simpleToken token = show (tokenType token)
+simpleToken = show . tokenType
 
 dumpTokens :: FilePath -> Bool -> IO ()
-dumpTokens file isSimple = lex <$> readFile file >>= \case
+dumpTokens file hideLocation = lex <$> readFile file >>= \case
     Left  errMsg -> hPutStrLn stderr errMsg >> exitFailure
-    Right tokens -> mapM_ putStrLn $ case isSimple of
-      True  -> simpleToken <$> tokens
-      False -> prettyToken <$> tokens
+    Right tokens ->
+      let f = if hideLocation then simpleToken else prettyToken
+      in mapM_ putStrLn $ f <$> tokens
 
 dumpAst :: FilePath -> Bool -> IO ()
-dumpAst file isSimple = __TODO__
+dumpAst file hideLocation = __TODO__

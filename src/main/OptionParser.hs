@@ -11,9 +11,9 @@ import           OwO.Options
 data CmdOptions = CmdOptions
   { compilerInputFile           :: Maybe FilePath
   , compilerIncludePaths        :: [FilePath]
-  , compilerDumpSimple          :: Bool
   , compilerDumpToken           :: Bool
   , compilerDumpAst             :: Bool
+  , compilerDumpHideLoc         :: Bool
   , showVersion                 :: Bool
   , showHelp                    :: Bool
   , pragmaSafe                  :: Bool
@@ -47,16 +47,16 @@ options = customExecParser pref information
                    <> short 'I'
                    )
       <*> switch
-          (  long "dump-simple"
-          <> help "Dump Tokens/AST without their positions"
-          )
-      <*> switch
           (  long "dump-tokens"
           <> help "Scan the file and dump tokens"
           )
       <*> switch
           (  long "dump-ast"
           <> help "Parse the file and print the abstract syntax tree"
+          )
+      <*> switch
+          (  long "dump-hide-location"
+          <> help "Hide location when dumping Tokens/AST"
           )
       <*> switch
           (  long "version"

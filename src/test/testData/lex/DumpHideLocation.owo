@@ -1,0 +1,6 @@
+Tokens in this file
+should **not**
+display location information.
+
+starPlatinum = take 100 $ repeat ora
+theWorld = take 100 $ repeat muda
