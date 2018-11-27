@@ -27,8 +27,7 @@ foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -d testData/*/
         my $caseFlags = '';
         $caseFlags = `cat $flagFile` if -e $flagFile;
         `touch $out`;
-        my $flags = "$fixtureFlags $caseFlags";
-        chomp $flags;
+        my $flags = "$fixtureFlags $caseFlags" =~ s/[\n|\r]//rg;
         my $diff = `owo $flags -c $case | diff --strip-trailing-cr - $out`;
         if (length $diff) {
             push @failure, $case;

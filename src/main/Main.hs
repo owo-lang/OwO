@@ -26,7 +26,7 @@ main :: IO ()
 main = do
   opts <- options
   showVersion opts `ifM` printVersion
-  file <- fromMaybe (noInputFile opts) $ pure <$> compilerInputFile opts
+  file <- maybe (noInputFile opts) pure $ compilerInputFile opts
   let hideLocation = compilerDumpHideLoc opts
   let toDumpTok = compilerDumpToken opts
   let toDumpAst = compilerDumpAst opts

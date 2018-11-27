@@ -10,3 +10,9 @@ g = do
    b +
  c
    d
+
+inttest y = 1
+  + 2
+
+ + 3 + y
+    + 4
