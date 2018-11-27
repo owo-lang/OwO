@@ -1,5 +1,6 @@
 {-# LANGUAGE CPP        #-}
 {-# LANGUAGE LambdaCase #-}
+
 module OwO.Util.Tools
   ( dumpTokens
   , dumpAst
@@ -12,6 +13,7 @@ import           OwO.Syntax.TokenType
 import           Prelude              hiding (lex)
 import           System.Exit          (exitFailure)
 import           System.IO
+
 #include <impossible.h>
 
 prettyToken :: PsiToken -> String
@@ -23,10 +25,19 @@ prettyToken token = show (tokenType token) ++ " " ++
                    " " ++ show (posLine loc) ++
                    " " ++ show (posCol  loc) ++ ")"
 
-dumpTokens :: FilePath -> IO ()
-dumpTokens file = lex <$> readFile file >>= \case
-  Left  errMsg -> hPutStrLn stderr errMsg >> exitFailure
-  Right tokens -> mapM_ putStrLn $ prettyToken <$> tokens
+simpleToken :: PsiToken -> String
+simpleToken token = show (tokenType token)
+
+dumpTokens :: Int -> FilePath -> IO ()
+dumpTokens n file
+  | n > 0 && n < 3 = lex <$> readFile file >>= \case
+    Left  errMsg -> hPutStrLn stderr errMsg >> exitFailure
+    Right tokens -> mapM_ putStrLn $ case n of
+      1 -> simpleToken <$> tokens
+      2 -> prettyToken <$> tokens
+  | otherwise = do
+      hPutStrLn stderr "error: invalid --dump-tokens verbosity"
+      exitFailure
 
 dumpAst :: FilePath -> IO ()
 dumpAst = __TODO__

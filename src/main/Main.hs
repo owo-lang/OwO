@@ -23,11 +23,11 @@ main = do
       if showVersion opts || showHelp opts then pure ()
       else hPutStrLn stderr "Please specify an input file!"
     Just file -> do
-      let toDumpTok = compilerDumpTokens opts
+      let nDumpTokLevel = compilerDumpTokVerbose opts
       let toDumpAst = compilerDumpAst opts
-      ifM toDumpTok $ dumpTokens file
+      dumpTokens nDumpTokLevel file
       ifM toDumpAst $ dumpAst file
-      unlessM (toDumpTok || toDumpAst) . runOwO $ CompilerOptions
+      unlessM ((nDumpTokLevel > 0) || toDumpAst) . runOwO $ CompilerOptions
         { optInputFile     = file
         , optIncludePaths  = compilerIncludePaths opts
         , optPragmaOptions = PragmaOptions

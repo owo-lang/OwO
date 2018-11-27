@@ -3,6 +3,7 @@ module OptionParser
   , CmdOptions(..)
   ) where
 
+import           Data.Char           (toLower)
 import           Options.Applicative
 
 import           OwO.Options
@@ -10,7 +11,7 @@ import           OwO.Options
 data CmdOptions = CmdOptions
   { compilerInputFile           :: Maybe FilePath
   , compilerIncludePaths        :: [FilePath]
-  , compilerDumpTokens          :: Bool
+  , compilerDumpTokVerbose      :: Int
   , compilerDumpAst             :: Bool
   , showVersion                 :: Bool
   , showHelp                    :: Bool
@@ -44,10 +45,11 @@ options = customExecParser pref information
                    <> metavar "DIR"
                    <> short 'I'
                    )
-      <*> switch
-          (  long "dump-tokens"
-          <> help "Lex the file and print the tokens"
-          )
+      <*> (length <$> many
+        (flag' () $  long "dump-tokens"
+                  <> short 'S'
+                  <> help "Scan the file and dump tokens, -SS for full info"
+                  ))
       <*> switch
           (  long "dump-ast"
           <> help "Parse the file and print the abstract syntax tree"
