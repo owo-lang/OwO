@@ -4,7 +4,7 @@ use crate::syntax::ast_term::ParamVisibility;
 use crate::syntax::lexical::{Location, Name};
 
 /// Core language term
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Term {
     App {
         func: Box<Term>,
@@ -16,11 +16,11 @@ pub enum Term {
         body: Box<Term>,
     },
     /// De-Bruijn Index
-    Ref {
-        index: u8,
+    Var {
+        index: usize,
     },
     /// Global reference
-    Var {
+    Ref {
         name: Name,
     },
     /// Leveled type

@@ -67,10 +67,12 @@ pub fn to_core(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCError
                                     arg: Box::new(Term::Meta { name: None }),
                                 };
                             }
-                            _ => return Err(IncorrectApplication(
-                                arg.location(),
-                                String::from("Cannot apply on a non-function"),
-                            )),
+                            _ => {
+                                return Err(IncorrectApplication(
+                                    arg.location(),
+                                    String::from("Cannot apply on a non-function"),
+                                ));
+                            }
                         }
                     }
                     Ok(new_func)
@@ -88,7 +90,18 @@ pub fn to_core(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCError
                 )),
             }
         }
-        AstTerm::Ref { name } => unimplemented!(),
+        AstTerm::Ref { name } => {
+            if let Some(index) = state
+                .local_vars
+                .iter()
+                .position(|local_var| local_var.0 == name.text)
+            {
+                Ok(Term::Var { index })
+            } else {
+                // TODO: global reference
+                Err(UnresolvedReference(name.clone()))
+            }
+        }
         AstTerm::Bind { name, binder, body } => {
             let mut arg_type = Term::Meta { name: None };
             let mut visibility = Explicit;
@@ -123,32 +136,39 @@ pub fn to_core(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCError
 }
 
 mod tests {
+    use crate::syntax::ast_term::AstTerm::{App, Bind, Meta, Ref};
     use crate::syntax::ast_term::Binder::Lambda;
     use crate::syntax::ast_term::ParamVisibility::*;
-    use crate::syntax::ast_term::AstTerm::{App, Meta, Bind};
     use crate::syntax::lexical::Name;
-    use crate::type_check::to_core;
+    use crate::type_check::context::TCError::*;
     use crate::type_check::context::TCState;
+    use crate::type_check::to_core;
 
     #[test]
+    #[rustfmt::skip]
     fn app_on_bind() {
-        let name = Some(Name {
-            text: String::from("name"),
-            location: Default::default(),
-        });
-        let meta = Meta { name: name.clone() };
-        let func = Bind {
-            name,
-            binder: Box::new(Lambda(None)),
-            body: Box::new(meta.clone()),
-        };
-        let arg = meta.clone();
-        let app = App {
-            arg: Box::new(arg),
-            func: Box::new(func),
-            app_visibility: Explicit,
-        };
+        let name = Some(Name { text: String::from("name"), location: Default::default() });
+        let reference = Ref { name: name.clone().unwrap() };
+        let arg = Meta { name: name.clone() };
+        let func = Bind { name, binder: Box::new(Lambda(None)), body: Box::new(reference) };
+        let app = App { arg: Box::new(arg), func: Box::new(func), app_visibility: Explicit };
         let term = to_core(&mut TCState::default(), &app);
         assert_eq!(term.is_ok(), true);
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn unresolved_reference() {
+        let name = Some(Name { text: String::from("name"), location: Default::default() });
+        let wrong_name = Name { text: String::from("a"), location: Default::default() };
+        let reference = Ref { name: wrong_name };
+        let arg = Meta { name: name.clone() };
+        let func = Bind { name, binder: Box::new(Lambda(None)), body: Box::new(reference) };
+        let app = App { arg: Box::new(arg), func: Box::new(func), app_visibility: Explicit };
+        let term = to_core(&mut TCState::default(), &app);
+        match term {
+            Err(UnresolvedReference(_)) => {}
+            _ => panic!("Test failed")
+        };
     }
 }

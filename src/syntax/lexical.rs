@@ -1,3 +1,5 @@
+use std::fmt::{Debug, Error, Formatter};
+
 #[derive(Clone, Hash)]
 pub struct Position {
     /// Column number, starts from 1
@@ -19,6 +21,12 @@ pub struct Location {
 pub struct Name {
     pub text: String,
     pub location: Location,
+}
+
+impl Debug for Name {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        f.write_str(self.text.as_str())
+    }
 }
 
 impl Default for Position {
