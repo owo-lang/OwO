@@ -1,5 +1,5 @@
 // Abstract Syntax Tree, Concrete Syntax Tree, Lexer/Parser
 // Translation, Desugaring, etc.
 
-mod ast_term;
-mod lexical;
+pub mod ast_term;
+pub mod lexical;

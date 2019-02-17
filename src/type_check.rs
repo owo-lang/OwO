@@ -1,4 +1,4 @@
 // TypeChecking module
 
-mod context;
-mod pragma;
+pub mod context;
+pub mod pragma;

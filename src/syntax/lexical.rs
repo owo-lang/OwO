@@ -8,7 +8,7 @@ pub struct Position {
     pub position: u32,
 }
 
-#[derive(Clone, Hash)]
+#[derive(Clone, Hash, Default)]
 pub struct Location {
     pub file_name: String,
     pub start: Position,
@@ -27,16 +27,6 @@ impl Default for Position {
             line: 1,
             column: 1,
             position: 0,
-        }
-    }
-}
-
-impl Default for Location {
-    fn default() -> Self {
-        Location {
-            file_name: Default::default(),
-            start: Default::default(),
-            end: Default::default(),
         }
     }
 }
