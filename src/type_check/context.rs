@@ -12,6 +12,16 @@ pub struct TCState<T> {
     pub pragmas: Vec<Pragma>,
 }
 
+impl<T> Default for TCState<T> {
+    fn default() -> Self {
+        TCState {
+            local_vars: vec![],
+            pragmas: vec![],
+            symbol_table: Default::default(),
+        }
+    }
+}
+
 /// Type-checking error
 #[derive(Clone)]
 pub enum TCError {

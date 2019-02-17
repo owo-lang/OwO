@@ -107,14 +107,48 @@ pub fn to_core(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCError
                     Lambda(None) => {}
                     Generalized => {}
                 }
+                state.local_vars.push((name.text.clone(), None));
             }
             let body = to_core(state, body)?;
-            state.local_vars.pop().unwrap();
+            if name.is_some() {
+                state.local_vars.pop().unwrap();
+            }
             Ok(Term::Lam {
                 body: Box::new(body),
                 arg_visibility: Explicit,
                 arg_type: Box::new(arg_type),
             })
         }
+    }
+}
+
+mod tests {
+    use crate::syntax::ast_term::Binder::Lambda;
+    use crate::syntax::ast_term::ParamVisibility::*;
+    use crate::syntax::ast_term::AstTerm::{App, Meta, Bind};
+    use crate::syntax::lexical::Name;
+    use crate::type_check::to_core;
+    use crate::type_check::context::TCState;
+
+    #[test]
+    fn app_on_bind() {
+        let name = Some(Name {
+            text: String::from("name"),
+            location: Default::default(),
+        });
+        let meta = Meta { name: name.clone() };
+        let func = Bind {
+            name,
+            binder: Box::new(Lambda(None)),
+            body: Box::new(meta.clone()),
+        };
+        let arg = meta.clone();
+        let app = App {
+            arg: Box::new(arg),
+            func: Box::new(func),
+            app_visibility: Explicit,
+        };
+        let term = to_core(&mut TCState::default(), &app);
+        assert_eq!(term.is_ok(), true);
     }
 }
