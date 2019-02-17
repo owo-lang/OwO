@@ -10,6 +10,15 @@ jobs:
       - restore_cache:
           key: project-cache
       - run:
+          name: Install Nightly Compiler
+          command: rustup install nightly
+      - run:
+          name: Check formatting
+          command: |
+            rustup component add rustfmt
+            rustfmt --version
+            cargo fmt -- --check
+      - run:
           name: Nightly Build
           command: |
             rustup run nightly rustc --version --verbose
@@ -18,6 +27,7 @@ jobs:
       - run:
           name: Stable Build
           command: |
+            rustup install stable
             rustup run stable rustc --version --verbose
             rustup run stable cargo --version --verbose
             rustup run stable cargo build
