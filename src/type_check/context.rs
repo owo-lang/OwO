@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use crate::type_check::pragma::Pragma;
+use std::collections::HashMap;
 
 pub type NameKey = String;
 

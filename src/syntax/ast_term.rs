@@ -43,6 +43,7 @@ mod tests {
     fn sanity_check() {
         let name = Some(Name {
             text: String::from("name"),
+            location: Default::default(),
         });
         let term = Bind {
             name: name.clone(),

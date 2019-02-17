@@ -1,6 +1,5 @@
 #[derive(Clone, Hash)]
 pub struct Position {
-    pub file_name: String,
     /// Column number, starts from 1
     pub line: u32,
     /// Line number, starts from 1
@@ -11,6 +10,7 @@ pub struct Position {
 
 #[derive(Clone, Hash)]
 pub struct Location {
+    pub file_name: String,
     pub start: Position,
     pub end: Position,
 }
@@ -19,4 +19,24 @@ pub struct Location {
 pub struct Name {
     pub text: String,
     pub location: Location,
+}
+
+impl Default for Position {
+    fn default() -> Self {
+        Position {
+            line: 1,
+            column: 1,
+            position: 0,
+        }
+    }
+}
+
+impl Default for Location {
+    fn default() -> Self {
+        Location {
+            file_name: Default::default(),
+            start: Default::default(),
+            end: Default::default(),
+        }
+    }
 }

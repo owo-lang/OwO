@@ -26,11 +26,11 @@ environment:
     # Nightly 64-bit MSVC
     - channel: nightly
       target: x86_64-pc-windows-msvc
-      cargoflags: --features "unstable"
+      #cargoflags: --features "unstable"
     # Nightly 32-bit MSVC
     - channel: nightly
       target: i686-pc-windows-msvc
-      cargoflags: --features "unstable"
+      #cargoflags: --features "unstable"
 
     ### GNU Toolchains ###
 
@@ -49,11 +49,11 @@ environment:
     # Nightly 64-bit GNU
     - channel: nightly
       target: x86_64-pc-windows-gnu
-      cargoflags: --features "unstable"
+      #cargoflags: --features "unstable"
     # Nightly 32-bit GNU
     - channel: nightly
       target: i686-pc-windows-gnu
-      cargoflags: --features "unstable"
+      #cargoflags: --features "unstable"
 
 matrix:
   allow_failures:
