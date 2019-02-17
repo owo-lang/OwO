@@ -1,4 +1,4 @@
-use super::lexical::Name;
+use super::lexical::{Location, Name};
 
 // TODO: Instance argument
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Ord, Eq)]
@@ -7,6 +7,7 @@ pub enum ParamVisibility {
     Implicit,
 }
 
+#[derive(Clone)]
 pub enum Binder {
     /// Lambda, optionally typed
     Lambda(Option<AstTerm>),
@@ -16,6 +17,7 @@ pub enum Binder {
     Generalized,
 }
 
+#[derive(Clone)]
 pub enum AstTerm {
     Bind {
         name: Option<Name>,
@@ -27,10 +29,18 @@ pub enum AstTerm {
     App {
         func: Box<AstTerm>,
         arg: Box<AstTerm>,
-        app_type: ParamVisibility,
+        app_visibility: ParamVisibility,
     },
     /// Meta variable
     Meta { name: Option<Name> },
+    /// Named reference
+    Ref { name: Name },
+}
+
+impl AstTerm {
+    pub fn location(&self) -> Location {
+        unimplemented!()
+    }
 }
 
 mod tests {
