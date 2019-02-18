@@ -1,21 +1,16 @@
-// TypeChecking module
-
-pub mod context;
-pub mod core;
-pub mod pragma;
-
-use self::context::TCError::*;
-use self::context::*;
-use self::core::{Def, Term};
-use crate::syntax::ast_term::AstTerm;
+use crate::syntax::abs::AstTerm;
+use crate::syntax::abs::ParamVisibility::*;
+use crate::syntax::elab::{Def, Term};
+use crate::type_check::context::TCError;
+use crate::type_check::context::TCError::*;
+use crate::type_check::context::TCState;
 
 pub fn is_instance(state: &TCState<Def>, term: &Term, expected_type: &Term) -> Result<(), TCError> {
     Ok(())
 }
 
-pub fn to_core(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCError> {
-    use crate::syntax::ast_term::Binder::*;
-    use crate::syntax::ast_term::ParamVisibility::*;
+pub fn elaborate(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCError> {
+    use crate::syntax::abs::Binder::*;
     match term {
         AstTerm::Meta { name } => Ok(Term::Meta { name: name.clone() }),
         AstTerm::App {
@@ -23,7 +18,7 @@ pub fn to_core(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCError
             arg,
             app_visibility,
         } => {
-            let func = to_core(state, func)?;
+            let func = elaborate(state, func)?;
             let (arg_visibility, arg_type, body) = match &func {
                 Term::Lam {
                     arg_type,
@@ -40,7 +35,7 @@ pub fn to_core(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCError
             match (app_visibility, arg_visibility) {
                 (Implicit, Explicit) => explicitly_apply_on_implicit(state, arg, &func, body),
                 (Implicit, Implicit) | (Explicit, Explicit) => {
-                    let arg = to_core(state, arg)?;
+                    let arg = elaborate(state, arg)?;
                     is_instance(state, &arg, arg_type).map(|()| Term::App {
                         arg: Box::new(arg),
                         func: Box::new(func),
@@ -56,7 +51,7 @@ pub fn to_core(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCError
             if let Some(index) = state
                 .local_vars
                 .iter()
-                .position(|local_var| local_var.0 == name.text)
+                .position(|(def_name, _)| def_name == &name.text)
             {
                 Ok(Term::Var { index })
             } else {
@@ -71,20 +66,20 @@ pub fn to_core(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCError
                 match *binder.clone() {
                     Pi(Some(term), bind_visibility) => {
                         visibility = bind_visibility;
-                        arg_type = to_core(state, &term)?;
+                        arg_type = elaborate(state, &term)?;
                     }
                     Pi(None, bind_visibility) => {
                         visibility = bind_visibility;
                     }
                     Lambda(Some(bind_type)) => {
-                        arg_type = to_core(state, &bind_type)?;
+                        arg_type = elaborate(state, &bind_type)?;
                     }
                     Lambda(None) => {}
                     Generalized => {}
                 }
                 state.local_vars.push((name.text.clone(), None));
             }
-            let body = to_core(state, body)?;
+            let body = elaborate(state, body)?;
             if name.is_some() {
                 state.local_vars.pop().unwrap();
             }
@@ -97,14 +92,14 @@ pub fn to_core(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCError
     }
 }
 
-/// A very long function of [`to_core`], extracted
+/// A very long part of [`to_core`], extracted
 fn explicitly_apply_on_implicit(
     state: &mut TCState<Def>,
     arg: &Box<AstTerm>,
     func: &Term,
     body: &Box<Term>,
 ) -> Result<Term, TCError> {
-    let arg = to_core(state, arg)?;
+    let arg = elaborate(state, arg)?;
     let mut new_func = Term::App {
         func: Box::new(func.clone()),
         arg: Box::new(Term::Meta { name: None }),
@@ -144,13 +139,13 @@ fn explicitly_apply_on_implicit(
 }
 
 mod tests {
-    use crate::syntax::ast_term::AstTerm::{App, Bind, Meta, Ref};
-    use crate::syntax::ast_term::Binder::Lambda;
-    use crate::syntax::ast_term::ParamVisibility::*;
+    use super::elaborate;
+    use crate::syntax::abs::AstTerm::{App, Bind, Meta, Ref};
+    use crate::syntax::abs::Binder::Lambda;
+    use crate::syntax::abs::ParamVisibility::*;
     use crate::syntax::lexical::Name;
     use crate::type_check::context::TCError::*;
     use crate::type_check::context::TCState;
-    use crate::type_check::to_core;
 
     #[test]
     #[rustfmt::skip]
@@ -160,7 +155,7 @@ mod tests {
         let arg = Meta { name: name.clone() };
         let func = Bind { name, binder: Box::new(Lambda(None)), body: Box::new(reference) };
         let app = App { arg: Box::new(arg), func: Box::new(func), app_visibility: Explicit };
-        let term = to_core(&mut TCState::default(), &app);
+        let term = elaborate(&mut TCState::default(), &app);
         assert_eq!(term.is_ok(), true);
     }
 
@@ -173,10 +168,10 @@ mod tests {
         let arg = Meta { name: name.clone() };
         let func = Bind { name, binder: Box::new(Lambda(None)), body: Box::new(reference) };
         let app = App { arg: Box::new(arg), func: Box::new(func), app_visibility: Explicit };
-        let term = to_core(&mut TCState::default(), &app);
+        let term = elaborate(&mut TCState::default(), &app);
         match term {
             Err(UnresolvedReference(_)) => {}
-            _ => panic!("Test failed")
+            _ => panic!("test failed")
         };
     }
 }

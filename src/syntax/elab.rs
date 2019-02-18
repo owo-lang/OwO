@@ -1,6 +1,6 @@
-// Core language, meta variables are allowed
+// Elaborated syntax, meta variables are allowed
 
-use crate::syntax::ast_term::ParamVisibility;
+use crate::syntax::abs::ParamVisibility;
 use crate::syntax::lexical::{Location, Name};
 
 /// Core language term

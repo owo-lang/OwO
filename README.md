@@ -14,7 +14,7 @@
 The compiler of the OwO programming language. WIP.
 There is an [unfinished Haskell version][Hs] left abandoned.
 
-OwO is inspired by Agda, Idris, Haskell and many other nice programming languages.
+OwO is inspired mainly by Agda, MLPolyR and Haskell.
 It's a functional programming language and a proof assistant.
 
  [Hs]: https://github.com/owo-lang/OwO-Haskell-Deprecated

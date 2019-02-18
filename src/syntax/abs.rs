@@ -45,9 +45,9 @@ impl AstTerm {
 
 mod tests {
     use super::*;
-    use crate::syntax::ast_term::AstTerm::Bind;
-    use crate::syntax::ast_term::AstTerm::Meta;
-    use crate::syntax::ast_term::Binder::Generalized;
+    use crate::syntax::abs::AstTerm::Bind;
+    use crate::syntax::abs::AstTerm::Meta;
+    use crate::syntax::abs::Binder::Generalized;
 
     #[test]
     fn sanity_check() {
