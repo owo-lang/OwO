@@ -38,45 +38,7 @@ pub fn to_core(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCError
                 }
             };
             match (app_visibility, arg_visibility) {
-                (Implicit, Explicit) => {
-                    let arg = to_core(state, arg)?;
-                    let mut new_func = Term::App {
-                        func: Box::new(func.clone()),
-                        arg: Box::new(Term::Meta { name: None }),
-                    };
-                    loop {
-                        match *body.clone() {
-                            Term::Lam {
-                                arg_visibility: Explicit,
-                                arg_type,
-                                body,
-                            } => {
-                                new_func = Term::App {
-                                    func: Box::new(new_func),
-                                    arg: Box::new(arg),
-                                };
-                                break;
-                            }
-                            Term::Lam {
-                                arg_visibility: Implicit,
-                                arg_type,
-                                body,
-                            } => {
-                                new_func = Term::App {
-                                    func: Box::new(new_func),
-                                    arg: Box::new(Term::Meta { name: None }),
-                                };
-                            }
-                            _ => {
-                                return Err(IncorrectApplication(
-                                    arg.location(),
-                                    String::from("Cannot apply on a non-function"),
-                                ));
-                            }
-                        }
-                    }
-                    Ok(new_func)
-                }
+                (Implicit, Explicit) => explicitly_apply_on_implicit(state, arg, &func, body),
                 (Implicit, Implicit) | (Explicit, Explicit) => {
                     let arg = to_core(state, arg)?;
                     is_instance(state, &arg, arg_type).map(|()| Term::App {
@@ -133,6 +95,52 @@ pub fn to_core(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCError
             })
         }
     }
+}
+
+/// A very long function of [`to_core`], extracted
+fn explicitly_apply_on_implicit(
+    state: &mut TCState<Def>,
+    arg: &Box<AstTerm>,
+    func: &Term,
+    body: &Box<Term>,
+) -> Result<Term, TCError> {
+    let arg = to_core(state, arg)?;
+    let mut new_func = Term::App {
+        func: Box::new(func.clone()),
+        arg: Box::new(Term::Meta { name: None }),
+    };
+    loop {
+        match *body.clone() {
+            Term::Lam {
+                arg_visibility: Explicit,
+                arg_type,
+                body,
+            } => {
+                new_func = Term::App {
+                    func: Box::new(new_func),
+                    arg: Box::new(arg),
+                };
+                break;
+            }
+            Term::Lam {
+                arg_visibility: Implicit,
+                arg_type,
+                body,
+            } => {
+                new_func = Term::App {
+                    func: Box::new(new_func),
+                    arg: Box::new(Term::Meta { name: None }),
+                };
+            }
+            _ => {
+                return Err(IncorrectApplication(
+                    arg.location(),
+                    String::from("Cannot apply on a non-function"),
+                ));
+            }
+        }
+    }
+    Ok(new_func)
 }
 
 mod tests {
