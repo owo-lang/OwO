@@ -1,3 +1,5 @@
+// Abstract syntax, desugared
+
 use super::lexical::{Location, Name};
 
 // TODO: Instance argument

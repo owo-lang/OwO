@@ -1,5 +1,5 @@
-mod syntax;
-mod type_check;
+pub mod syntax;
+pub mod type_check;
 
 fn main() {
     println!("Hello, OwO!");
