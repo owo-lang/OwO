@@ -1,6 +1,7 @@
 use crate::syntax::abs::AstTerm;
 use crate::syntax::abs::ParamVisibility::*;
 use crate::syntax::elab::{Def, Term};
+use crate::syntax::lexical::Locatable;
 use crate::type_check::context::TCError;
 use crate::type_check::context::TCError::*;
 use crate::type_check::context::TCState;
@@ -24,7 +25,8 @@ pub fn elaborate(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCErr
                     arg_type,
                     arg_visibility,
                     body,
-                } => (arg_visibility, arg_type, body),
+                } => (*arg_visibility, arg_type, body),
+                // TODO: apply on meta?
                 _ => {
                     return Err(IncorrectApplication(
                         term.location(),
@@ -51,7 +53,7 @@ pub fn elaborate(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCErr
             if let Some(index) = state
                 .local_vars
                 .iter()
-                .position(|(def_name, _)| def_name == &name.text)
+                .position(|(def_name, _)| Some(def_name) == name.text_name.as_ref())
             {
                 Ok(Term::Var { index })
             } else {
@@ -60,9 +62,9 @@ pub fn elaborate(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCErr
             }
         }
         AstTerm::Bind { name, binder, body } => {
-            let mut arg_type = Term::Meta { name: None };
+            let mut arg_type = Term::anonymous_meta(name.location.clone());
             let mut visibility = Explicit;
-            if let Some(name) = name {
+            if let Some(name) = name.text_name.clone() {
                 match *binder.clone() {
                     Pi(Some(term), bind_visibility) => {
                         visibility = bind_visibility;
@@ -77,10 +79,10 @@ pub fn elaborate(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCErr
                     Lambda(None) => {}
                     Generalized => {}
                 }
-                state.local_vars.push((name.text.clone(), None));
+                state.local_vars.push((name.clone(), None));
             }
             let body = elaborate(state, body)?;
-            if name.is_some() {
+            if name.text_name.is_some() {
                 state.local_vars.pop().unwrap();
             }
             Ok(Term::Lam {
@@ -102,7 +104,7 @@ fn explicitly_apply_on_implicit(
     let arg = elaborate(state, arg)?;
     let mut new_func = Term::App {
         func: Box::new(func.clone()),
-        arg: Box::new(Term::Meta { name: None }),
+        arg: Box::new(Term::anonymous_meta(Default::default())),
     };
     loop {
         match *body.clone() {
@@ -124,7 +126,7 @@ fn explicitly_apply_on_implicit(
             } => {
                 new_func = Term::App {
                     func: Box::new(new_func),
-                    arg: Box::new(Term::Meta { name: None }),
+                    arg: Box::new(Term::anonymous_meta(arg.location())),
                 };
             }
             _ => {
@@ -139,7 +141,6 @@ fn explicitly_apply_on_implicit(
 }
 
 mod tests {
-    use super::elaborate;
     use crate::syntax::abs::AstTerm::{App, Bind, Meta, Ref};
     use crate::syntax::abs::Binder::Lambda;
     use crate::syntax::abs::ParamVisibility::*;
@@ -147,11 +148,14 @@ mod tests {
     use crate::type_check::context::TCError::*;
     use crate::type_check::context::TCState;
 
+    use super::elaborate;
+
     #[test]
     #[rustfmt::skip]
     fn app_on_bind() {
-        let name = Some(Name { text: String::from("name"), location: Default::default() });
-        let reference = Ref { name: name.clone().unwrap() };
+        let text_name = Some(String::from("name"));
+        let name = Name { text_name, location: Default::default() };
+        let reference = Ref { name: name.clone() };
         let arg = Meta { name: name.clone() };
         let func = Bind { name, binder: Box::new(Lambda(None)), body: Box::new(reference) };
         let app = App { arg: Box::new(arg), func: Box::new(func), app_visibility: Explicit };
@@ -162,8 +166,9 @@ mod tests {
     #[test]
     #[rustfmt::skip]
     fn unresolved_reference() {
-        let name = Some(Name { text: String::from("name"), location: Default::default() });
-        let wrong_name = Name { text: String::from("a"), location: Default::default() };
+        let text_name = Some(String::from("name"));
+        let name = Name { text_name, location: Default::default() };
+        let wrong_name = Name { text_name: Some(String::from("a")), location: Default::default() };
         let reference = Ref { name: wrong_name };
         let arg = Meta { name: name.clone() };
         let func = Bind { name, binder: Box::new(Lambda(None)), body: Box::new(reference) };

@@ -1,6 +1,7 @@
+use std::collections::HashMap;
+
 use crate::syntax::lexical::*;
 use crate::type_check::pragma::Pragma;
-use std::collections::HashMap;
 
 pub type NameKey = String;
 
@@ -10,14 +11,18 @@ pub struct TCState<T> {
     /// Name and value. Abstracted value is None, "let"ed value is Some(actual)
     pub local_vars: Vec<(NameKey, Option<T>)>,
     pub pragmas: Vec<Pragma>,
+    /// Non-fatal errors
+    pub warnings: Vec<TCError>,
 }
 
+/// In this way, [`T`] no longer need to implement [`Default`].
 impl<T> Default for TCState<T> {
     fn default() -> Self {
         TCState {
-            local_vars: vec![],
-            pragmas: vec![],
+            local_vars: Default::default(),
+            pragmas: Default::default(),
             symbol_table: Default::default(),
+            warnings: Default::default(),
         }
     }
 }
@@ -27,4 +32,5 @@ impl<T> Default for TCState<T> {
 pub enum TCError {
     UnresolvedReference(Name),
     IncorrectApplication(Location, String),
+    ApplicationOnMeta(Location, String),
 }

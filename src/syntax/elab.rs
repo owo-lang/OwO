@@ -1,7 +1,7 @@
 // Elaborated syntax, meta variables are allowed
 
 use crate::syntax::abs::ParamVisibility;
-use crate::syntax::lexical::{Location, Name};
+use crate::syntax::lexical::{Locatable, Location, Name};
 
 /// Core language term
 #[derive(Clone, Debug)]
@@ -28,13 +28,29 @@ pub enum Term {
         level: u8,
     },
     Meta {
-        name: Option<Name>,
+        name: Name,
     },
 }
 
+impl Locatable for Term {
+    fn location(&self) -> Location {
+        use self::Term::*;
+        match self {
+            Meta { name } => name.location.clone(),
+            Ref { name } => name.location.clone(),
+            _ => unimplemented!(),
+        }
+    }
+}
+
 impl Term {
-    pub fn location(&self) -> Location {
-        unimplemented!()
+    pub fn anonymous_meta(location: Location) -> Term {
+        Term::Meta {
+            name: Name {
+                text_name: None,
+                location,
+            },
+        }
     }
 }
 

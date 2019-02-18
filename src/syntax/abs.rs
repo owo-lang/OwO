@@ -1,6 +1,6 @@
 // Abstract syntax, desugared
 
-use super::lexical::{Location, Name};
+use super::lexical::{Locatable, Location, Name};
 
 // TODO: Instance argument
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Ord, Eq)]
@@ -22,7 +22,7 @@ pub enum Binder {
 #[derive(Clone)]
 pub enum AstTerm {
     Bind {
-        name: Option<Name>,
+        name: Name,
         binder: Box<Binder>,
         body: Box<AstTerm>,
     },
@@ -34,33 +34,18 @@ pub enum AstTerm {
         app_visibility: ParamVisibility,
     },
     /// Meta variable
-    Meta { name: Option<Name> },
+    Meta { name: Name },
     /// Named reference
     Ref { name: Name },
 }
 
-impl AstTerm {
-    pub fn location(&self) -> Location {
-        unimplemented!()
-    }
-}
-
-mod tests {
-    use super::*;
-    use crate::syntax::abs::AstTerm::Bind;
-    use crate::syntax::abs::AstTerm::Meta;
-    use crate::syntax::abs::Binder::Generalized;
-
-    #[test]
-    fn sanity_check() {
-        let name = Some(Name {
-            text: String::from("name"),
-            location: Default::default(),
-        });
-        let term = Bind {
-            name: name.clone(),
-            binder: Box::new(Generalized),
-            body: Box::new(Meta { name }),
-        };
+impl Locatable for AstTerm {
+    fn location(&self) -> Location {
+        use self::AstTerm::*;
+        match self {
+            Meta { name } => name.location.clone(),
+            Ref { name } => name.location.clone(),
+            _ => unimplemented!(),
+        }
     }
 }

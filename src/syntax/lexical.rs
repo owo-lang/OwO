@@ -19,15 +19,25 @@ pub struct Location {
     pub end: Position,
 }
 
+pub trait Locatable {
+    fn location(&self) -> Location;
+}
+
 #[derive(Clone, Hash)]
 pub struct Name {
-    pub text: String,
+    pub text_name: Option<String>,
     pub location: Location,
+}
+
+impl Name {
+    pub fn pretty_text(&self) -> String {
+        self.text_name.clone().unwrap_or(String::from("anonymous"))
+    }
 }
 
 impl Debug for Name {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        f.write_str(self.text.as_str())
+        f.write_str(self.pretty_text().as_str())
     }
 }
 
