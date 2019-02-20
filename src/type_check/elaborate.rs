@@ -1,19 +1,32 @@
-use crate::syntax::abs::AstTerm;
 use crate::syntax::abs::ParamVisibility::*;
+use crate::syntax::abs::{AstTerm, Binder};
 use crate::syntax::elab::{Def, Term};
 use crate::syntax::lexical::Locatable;
-use crate::type_check::context::TCError;
 use crate::type_check::context::TCError::*;
-use crate::type_check::context::TCState;
+use crate::type_check::context::{TCError, TCResult, TCState};
 
-pub fn is_instance(state: &TCState<Def>, term: &Term, expected_type: &Term) -> Result<(), TCError> {
+/// If something is a type
+pub fn is_type(state: &TCState<Def>, term: &AstTerm) -> TCResult<()> {
+    match term {
+        AstTerm::Bind { binder, name, body } => match **binder {
+            Binder::Pi(_, _) => Ok(()),
+            _ => Err(InvalidType),
+        },
+        AstTerm::Type => Ok(()),
+        _ => Err(InvalidType),
+    }
+}
+
+pub fn is_instance(state: &TCState<Def>, term: &Term, expected_type: &Term) -> TCResult<()> {
+    // TODO
     Ok(())
 }
 
-pub fn elaborate(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCError> {
+pub fn elaborate(state: &mut TCState<Def>, term: &AstTerm) -> TCResult<Term> {
     use crate::syntax::abs::Binder::*;
     match term {
-        AstTerm::Meta { name } => Ok(Term::Meta { name: name.clone() }),
+        AstTerm::Type => Ok(Term::Type),
+        AstTerm::Meta { name } => Ok(Term::fresh_meta(name.clone())),
         AstTerm::App {
             func,
             arg,
@@ -21,7 +34,7 @@ pub fn elaborate(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCErr
         } => {
             let func = elaborate(state, func)?;
             let (arg_visibility, arg_type, body) = match &func {
-                Term::Lam {
+                Term::Bind {
                     arg_type,
                     arg_visibility,
                     body,
@@ -85,7 +98,7 @@ pub fn elaborate(state: &mut TCState<Def>, term: &AstTerm) -> Result<Term, TCErr
             if name.text_name.is_some() {
                 state.local_vars.pop().unwrap();
             }
-            Ok(Term::Lam {
+            Ok(Term::Bind {
                 body: Box::new(body),
                 arg_visibility: Explicit,
                 arg_type: Box::new(arg_type),
@@ -100,7 +113,7 @@ fn explicitly_apply_on_implicit(
     arg: &Box<AstTerm>,
     func: &Term,
     body: &Box<Term>,
-) -> Result<Term, TCError> {
+) -> TCResult<Term> {
     let arg = elaborate(state, arg)?;
     let mut new_func = Term::App {
         func: Box::new(func.clone()),
@@ -108,7 +121,7 @@ fn explicitly_apply_on_implicit(
     };
     loop {
         match *body.clone() {
-            Term::Lam {
+            Term::Bind {
                 arg_visibility: Explicit,
                 arg_type,
                 body,
@@ -119,7 +132,7 @@ fn explicitly_apply_on_implicit(
                 };
                 break;
             }
-            Term::Lam {
+            Term::Bind {
                 arg_visibility: Implicit,
                 arg_type,
                 body,

@@ -34,9 +34,15 @@ pub enum AstTerm {
         app_visibility: ParamVisibility,
     },
     /// Meta variable
-    Meta { name: Name },
+    Meta {
+        name: Name,
+    },
     /// Named reference
-    Ref { name: Name },
+    Ref {
+        name: Name,
+    },
+    // TODO level
+    Type,
 }
 
 impl Locatable for AstTerm {

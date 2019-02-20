@@ -3,6 +3,15 @@
 use crate::syntax::abs::ParamVisibility;
 use crate::syntax::lexical::{Locatable, Location, Name};
 
+/// Constrains on a meta var. Currently I decide to only make
+/// a simple trivial meta solver.
+#[derive(Clone, Debug)]
+pub enum MetaConstraint {
+    IsTypeOf(Term),
+    IsInstanceOf(Term),
+    IsEquivalentTo(Term),
+}
+
 /// Core language term
 #[derive(Clone, Debug)]
 pub enum Term {
@@ -10,7 +19,7 @@ pub enum Term {
         func: Box<Term>,
         arg: Box<Term>,
     },
-    Lam {
+    Bind {
         arg_type: Box<Term>,
         arg_visibility: ParamVisibility,
         body: Box<Term>,
@@ -23,12 +32,11 @@ pub enum Term {
     Ref {
         name: Name,
     },
-    /// Leveled type
-    Set {
-        level: u8,
-    },
+    // TODO level
+    Type,
     Meta {
         name: Name,
+        constraints: Vec<Box<MetaConstraint>>,
     },
 }
 
@@ -36,7 +44,7 @@ impl Locatable for Term {
     fn location(&self) -> Location {
         use self::Term::*;
         match self {
-            Meta { name } => name.location.clone(),
+            Meta { name, constraints } => name.location.clone(),
             Ref { name } => name.location.clone(),
             _ => unimplemented!(),
         }
@@ -44,13 +52,18 @@ impl Locatable for Term {
 }
 
 impl Term {
-    pub fn anonymous_meta(location: Location) -> Term {
+    pub fn fresh_meta(name: Name) -> Term {
         Term::Meta {
-            name: Name {
-                text_name: None,
-                location,
-            },
+            name,
+            constraints: vec![],
         }
+    }
+
+    pub fn anonymous_meta(location: Location) -> Term {
+        Term::fresh_meta(Name {
+            text_name: None,
+            location,
+        })
     }
 }
 
